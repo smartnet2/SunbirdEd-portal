@@ -82,6 +82,7 @@ app.all(['/content-editor/telemetry', '/collection-editor/telemetry'], bodyParse
 
 // learner api routes
 require('./routes/learnerRoutes.js')(app)
+require('./helpers/pdfCreator/pdfCreator.js')(app)
 
 app.all(['/content/data/v1/telemetry', '/action/data/v3/telemetry'],
   proxy(envHelper.TELEMETRY_SERVICE_LOCAL_URL, {
