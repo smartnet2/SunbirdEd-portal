@@ -1,13 +1,5 @@
-<sui-modal
-  [mustScroll]="true" 
-  [isClosable]="true"
-  [transitionDuration]="0"
-  [size]="'normal'"
-  class="sb-modal"
-  appBodyScroll
-  *ngIf='showCreateModal' 
-  (dismissed)="redirect()"
-  #createBatchModel>
+<sui-modal [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
+  appBodyScroll *ngIf='showCreateModal' (dismissed)="redirect()" #createBatchModel>
 
   <!--Header-->
   <div class="sb-modal-header">
@@ -18,13 +10,15 @@
   <!--Content-->
   <div class="sb-modal-content" [appTelemetryImpression]="telemetryImpression">
     <form [formGroup]="createBatchForm" class="ui form batchAddUserForm">
-      <div class="one field" [ngClass]="createBatchForm.controls['name'].invalid && createBatchForm.controls['name'].errors.required && !createBatchForm.controls['name'].pristine ? 'error': ''">
+      <div class="one field"
+        [ngClass]="createBatchForm.controls['name'].invalid && createBatchForm.controls['name'].errors.required && !createBatchForm.controls['name'].pristine ? 'error': ''">
         <div class="required field">
           <label>{{resourceService?.frmelmnts?.lbl?.batchname}}</label>
           <input type="text" name="name" formControlName="name">
         </div>
       </div>
-      <div class="mt-0 mb-10 ui pointing red basic label below" *ngIf="createBatchForm.controls.name.invalid && createBatchForm.controls['name'].errors.required && !createBatchForm.controls['name'].pristine">
+      <div class="mt-0 mb-10 ui pointing red basic label below"
+        *ngIf="createBatchForm.controls.name.invalid && createBatchForm.controls['name'].errors.required && !createBatchForm.controls['name'].pristine">
         {{resourceService?.messages?.stmsg?.m0114}}
       </div>
       <div class="one field">
@@ -50,7 +44,8 @@
       </div>
 
       <div class="two fields">
-        <div class="required field" [ngClass]="createBatchForm.controls['startDate'].invalid && createBatchForm.controls['startDate'].errors.required && !createBatchForm.controls['startDate'].pristine ? 'error': ''">
+        <div class="required field"
+          [ngClass]="createBatchForm.controls['startDate'].invalid && createBatchForm.controls['startDate'].errors.required && !createBatchForm.controls['startDate'].pristine ? 'error': ''">
           <label>{{resourceService?.frmelmnts?.lbl?.startdate}}</label>
           <div class="ui read-only calendar rangestartAdd mb-10" id="rangestartAdd">
             <div class="ui input left icon">
@@ -58,7 +53,8 @@
               <input [pickerMinDate]='pickerMinDate' suiDatepicker formControlName="startDate" [pickerMode]="'date'">
             </div>
           </div>
-          <div class="mt-0 mb-10 ui pointing red basic label below" *ngIf="createBatchForm.controls.startDate.invalid && createBatchForm.controls['startDate'].errors.required && !createBatchForm.controls['startDate'].pristine">
+          <div class="mt-0 mb-10 ui pointing red basic label below"
+            *ngIf="createBatchForm.controls.startDate.invalid && createBatchForm.controls['startDate'].errors.required && !createBatchForm.controls['startDate'].pristine">
             {{resourceService?.messages?.stmsg?.m0113}}
           </div>
         </div>
@@ -67,7 +63,8 @@
           <div apply-script class="ui calendar rangeendAdd" id="rangeendAdd">
             <div class="ui input left icon">
               <i class="calendar icon date-calendar"></i>
-              <input [pickerMinDate]='pickerMinDateForEndDate' suiDatepicker formControlName="endDate" [pickerMode]="'date'">
+              <input [pickerMinDate]='pickerMinDateForEndDate' suiDatepicker formControlName="endDate"
+                [pickerMode]="'date'">
             </div>
           </div>
         </div>
@@ -75,13 +72,15 @@
 
       <div class="one field">
         <label>{{resourceService?.frmelmnts?.lbl?.batchmentors}}</label>
-        <div class="createbatchdropdown ui fluid multiple search selection dropdown" id="mentors" ng-class="batch.isUserSearch === 1 ? 'loading' : undefined">
+        <div class="createbatchdropdown ui fluid multiple search selection dropdown" id="mentors"
+          ng-class="batch.isUserSearch === 1 ? 'loading' : undefined">
           <input id="mentorSelList">
           <i class="dropdown icon"></i>
           <div class="default text">{{resourceService?.frmelmnts?.intxt?.t0006}}</div>
           <div class="menu">
             <div class="item" [attr.data-value]="mentor.id" *ngFor="let mentor of mentorList">
-              <img class="ui mini avatar image" src="{{mentor.avatar || 'assets/images/user_logo.png' | cdnprefixurl}}"> {{mentor.name}}{{mentor.otherDetail}}
+              <img class="ui mini avatar image" src="{{mentor.avatar || 'assets/images/user_logo.png' | cdnprefixurl}}">
+              {{mentor.name}}{{mentor.otherDetail}}
             </div>
           </div>
         </div>
@@ -89,13 +88,15 @@
 
       <div class="one field " *ngIf="createBatchForm.value.enrollmentType !== 'open'">
         <label>{{resourceService?.frmelmnts?.lbl?.bacthmembers}}</label>
-        <div class="createbatchdropdown ui fluid multiple search selection dropdown" id="participants" ng-class="batch.isUserSearch === 1 ? 'loading' : undefined">
+        <div class="createbatchdropdown ui fluid multiple search selection dropdown" id="participants"
+          ng-class="batch.isUserSearch === 1 ? 'loading' : undefined">
           <input id="userSelList">
           <i class="dropdown icon"></i>
           <div class="default text">{{resourceService?.frmelmnts?.intxt?.t0006}}</div>
           <div class="menu">
             <div class="item" *ngFor="let user of participantList" [attr.data-value]="user.id">
-              <img class="ui mini avatar image" src="{{user.avatar || 'assets/images/user_logo.png' | cdnprefixurl}}"> {{user.name}}{{user.otherDetail}}
+              <img class="ui mini avatar image" src="{{user.avatar || 'assets/images/user_logo.png' | cdnprefixurl}}">
+              {{user.name}}{{user.otherDetail}}
             </div>
           </div>
         </div>
@@ -106,21 +107,14 @@
 
   <!--Actions-->
   <div class="sb-modal-actions">
-    <button 
-      class="sb-btn sb-btn-normal sb-btn-primary" 
-      id="submitbutton" 
-      [disabled]="disableSubmitBtn" 
-      (click)="createBatch()"
-    >
+    <button class="sb-btn sb-btn-normal sb-btn-primary" id="submitbutton" [disabled]="disableSubmitBtn"
+      (click)="createBatch()">
       {{resourceService?.frmelmnts?.btn?.create}}
     </button>
-    <button 
-      class="sb-btn sb-btn-normal sb-btn-outline-primary" 
-      (click)="createBatchForm.reset()"
-    >
+    <button class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="createBatchForm.reset()">
       {{resourceService?.frmelmnts?.btn?.clear}}
     </button>
-    
+
   </div>
   <!--/Actions-->
 </sui-modal>
