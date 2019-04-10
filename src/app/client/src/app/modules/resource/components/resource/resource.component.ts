@@ -105,11 +105,13 @@ export class ResourceComponent implements OnInit, OnDestroy {
     const option: any = {
       source: 'web',
       name: 'Resource',
-      filters: _.get(this.queryParams, 'appliedFilters') ?  filters : _.get(manipulatedData, 'filters'),
+      filters: _.get(this.queryParams, 'appliedFilters') ?  filters : {},
       mode: _.get(manipulatedData, 'mode'),
       exists: [],
       params : this.configService.appConfig.Library.contentApiQueryParams
     };
+    // default filters
+    //filters: _.get(this.queryParams, 'appliedFilters') ?  filters : {_.get(manipulatedData, 'filters')}
     if (_.get(manipulatedData, 'filters')) {
       option.softConstraints = _.get(manipulatedData, 'softConstraints');
     }
