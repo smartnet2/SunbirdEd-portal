@@ -87,7 +87,8 @@ export class ProfileFrameworkPopupComponent implements OnInit, OnDestroy {
         this.selectedOption.board = _.get(this.selectedOption, 'board[0]');
         editMode = true;
       }
-      return this.getUpdatedFilters({index: 0}, editMode); // get filters for first field i.e index 0 incase of init
+      return this._formFieldProperties;
+      // return this.getUpdatedFilters({index: 0}, editMode); // get filters for first field i.e index 0 incase of init
     }));
   }
   private getFormatedFilterDetails() {
