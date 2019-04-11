@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { takeUntil, mergeMap } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterNavigationService, ResourceService, ToasterService, ServerResponse } from '@sunbird/shared';
@@ -11,7 +11,11 @@ import * as moment from 'moment';
 import { Subject, combineLatest } from 'rxjs';
 @Component({
   selector: 'app-create-batch',
-  templateUrl: './create-batch.component.html'
+  templateUrl: './create-batch.component.html',
+  styleUrls: ['./create-batch.component.scss'],
+  /* #NUIH change: Starts here */
+  encapsulation: ViewEncapsulation.None
+  /* #NUIH change: Ends here*/
 })
 export class CreateBatchComponent implements OnInit, OnDestroy {
 
@@ -141,7 +145,7 @@ export class CreateBatchComponent implements OnInit, OnDestroy {
 
   private fetchBatchDetails() {
     const requestBody = {
-      filters: {'status': '1'},
+      filters: { 'status': '1' },
     };
     return combineLatest(
       this.courseBatchService.getUserList(requestBody),
@@ -175,8 +179,8 @@ export class CreateBatchComponent implements OnInit, OnDestroy {
     const mentorList = [];
     if (res.result.response.content && res.result.response.content.length > 0) {
       _.forEach(res.result.response.content, (userData) => {
-        if ( _.includes(this.selectedMentors , userData.identifier) ||
-        _.includes(this.selectedParticipants , userData.identifier)) {
+        if (_.includes(this.selectedMentors, userData.identifier) ||
+          _.includes(this.selectedParticipants, userData.identifier)) {
           return;
         }
         if (userData.identifier !== this.userService.userid) {
@@ -319,7 +323,7 @@ export class CreateBatchComponent implements OnInit, OnDestroy {
     this.selectedParticipants = $('#participants').dropdown('get value') ? $('#participants').dropdown('get value').split(',') : [];
     this.selectedMentors = $('#mentors').dropdown('get value') ? $('#mentors').dropdown('get value').split(',') : [];
     const requestBody = {
-      filters: {'status': '1'},
+      filters: { 'status': '1' },
       query: query
     };
     this.courseBatchService.getUserList(requestBody).pipe(takeUntil(this.unsubscribe))
