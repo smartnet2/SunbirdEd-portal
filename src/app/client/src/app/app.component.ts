@@ -264,7 +264,8 @@ export class AppComponent implements OnInit {
   private setPortalTitleLogo(): void {
     this.tenantService.tenantData$.subscribe(data => {
       if (!data.err) {
-        document.title = this.userService.rootOrgName || data.tenantData.titleName;
+        /*document.title = this.userService.rootOrgName || data.tenantData.titleName;*/
+        document.title = "NULP";
         document.querySelector('link[rel*=\'icon\']').setAttribute('href', data.tenantData.favicon);
       }
     });
