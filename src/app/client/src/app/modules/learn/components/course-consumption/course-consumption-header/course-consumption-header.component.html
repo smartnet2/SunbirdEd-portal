@@ -40,6 +40,13 @@
               <div *ngIf="permissionService.permissionAvailable && !enrolledCourse" appPermission [permission]="dashboardPermission">
                 <button class="sb-btn sb-btn-primary sb-btn-normal width-100 mt-10" (click)="showDashboard()">{{resourceService?.frmelmnts?.btn?.viewCourseStatsDashboard}}</button>
               </div>
+              
+              <div *ngIf="showCertificateBtn" class="mt-10">
+                  <button  class="sb-btn sb-btn-primary sb-btn-normal width-100" (click)="downloadCertificate()">
+                      Download Certificate
+                    </button>
+              </div>
+
             </div>
             <!-- course ended Error message starts -->
             <!-- <h6 class="ui small negative message mt-0 mb-15 ml-15" *ngIf="courseEndedErrorMessage">{{resourceService?.messages?.imsg?.m0043}}</h6> -->

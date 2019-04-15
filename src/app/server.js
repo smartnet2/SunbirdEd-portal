@@ -54,6 +54,9 @@ app.use(keycloak.middleware({ admin: '/callback', logout: '/logout' }))
 app.use('/announcement/v1', bodyParser.urlencoded({ extended: false }),
   bodyParser.json({ limit: '10mb' }), require('./helpers/announcement')(keycloak))
 
+app.use('/discussions/v1', bodyParser.urlencoded({ extended: false }),
+  bodyParser.json({ limit: '10mb' }), require('./helpers/discussion')(keycloak))
+
 app.all('/logoff', endSession, (req, res) => {
   res.cookie('connect.sid', '', { expires: new Date() })
   res.redirect('/logout')
@@ -79,6 +82,7 @@ app.all(['/content-editor/telemetry', '/collection-editor/telemetry'], bodyParse
 
 // learner api routes
 require('./routes/learnerRoutes.js')(app)
+require('./helpers/pdfCreator/pdfCreator.js')(app)
 
 app.all(['/content/data/v1/telemetry', '/action/data/v3/telemetry'],
   proxy(envHelper.TELEMETRY_SERVICE_LOCAL_URL, {
