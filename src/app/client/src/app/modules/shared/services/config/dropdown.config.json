@@ -370,11 +370,11 @@
             "label": [
                 {
                     "id": "board",
-                    "name": "Board/Syllabus"
+                    "name": "Category"
                 },
                 {
                     "id": "gradeLevel",
-                    "name": "Grades"
+                    "name": "Sub-Category"
                 },
                 {
                     "id": "medium",
@@ -382,7 +382,7 @@
                 },
                 {
                     "id": "subject",
-                    "name": "Subjects"
+                    "name": "Topic"
                 },
                 {
                     "id": "contentType",
