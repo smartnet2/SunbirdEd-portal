@@ -211,7 +211,7 @@ function createCertificate (req, res) {
   const courseId = data.courseId
   const courseName = data.courseName
   // Create file name with course name and courseId and courseName date
-  const fileName = courseName + '-' + userId + '-' + courseId + '.pdf'
+  const fileName = courseName + '-' + userId + '-' + courseId + new Date().getTime() + '.pdf'
   // Create local file path
    const filePath = path.join(__dirname, fileName)
   //const filePath = path.join('C:\projects\Tarento\pdfdoc', fileName)

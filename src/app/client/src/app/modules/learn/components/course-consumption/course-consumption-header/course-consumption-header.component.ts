@@ -189,7 +189,10 @@ export class CourseConsumptionHeaderComponent implements OnInit, AfterViewInit, 
     return (this.enrolledBatchInfo.status === 2 && this.progress < 100);
   }
   downloadCertificate() {
-    const marks = this.courseBatchService.returnMarks();
+    const marks = {
+      'scoredMarks': localStorage.getItem('totalScore'),
+      'maxMarks': localStorage.getItem('maxScore')
+    };
     this.certificateDownloadService.downloadAsPdf(this.title, this.fullName, this.userId, this.courseId, this.courseHierarchy.name, marks)
       .subscribe((res: Response) => {
         this.fileUrl = res['result']['fileUrl'];
