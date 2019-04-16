@@ -293,7 +293,15 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
     const eid = event.detail.telemetryData.eid;
     if (eid === 'END' && !this.validEndEvent(event)) {
       return;
-    }     
+    } else {
+      setTimeout(() => {
+        localStorage.getItem('totalScore');	
+        console.log('totalScore=======>', localStorage.getItem('totalScore'));	 
+      }, 10);
+        if (localStorage.getItem('totalScore') !== '') {
+         this.courseBatchService.scoredMarks(localStorage.getItem('totalScore'), localStorage.getItem('maxScore'));
+      }
+    }
     if (eid === 'END' && this.nextPlaylistItem === undefined) {
       this.showRatingModal = true;
     }

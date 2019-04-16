@@ -14,6 +14,7 @@ import { IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
 import { UserService } from './../../../../core/services/user/user.service';
+import { CourseBatchService } from './../../../services/course-batch/course-batch.service';
 
 @Component({
   selector: 'app-course-consumption-header',
@@ -66,7 +67,8 @@ export class CourseConsumptionHeaderComponent implements OnInit, AfterViewInit, 
     public toasterService: ToasterService, public copyContentService: CopyContentService, private changeDetectorRef: ChangeDetectorRef,
     private courseProgressService: CourseProgressService, public contentUtilsServiceService: ContentUtilsServiceService,
     public externalUrlPreviewService: ExternalUrlPreviewService, public coursesService: CoursesService, 
-    public userService: UserService,private certificateDownloadService: CertificateDownloadService) {
+    public userService: UserService, private certificateDownloadService: CertificateDownloadService,
+     public courseBatchService: CourseBatchService) {
     this.userName = this.userService.userProfile.userName;
     this.userId = this.userService.userid;
   }
@@ -187,7 +189,8 @@ export class CourseConsumptionHeaderComponent implements OnInit, AfterViewInit, 
     return (this.enrolledBatchInfo.status === 2 && this.progress < 100);
   }
   downloadCertificate() {
-    this.certificateDownloadService.downloadAsPdf(this.title, this.fullName, this.userId, this.courseId, this.courseHierarchy.name)
+    const marks = this.courseBatchService.returnMarks();
+    this.certificateDownloadService.downloadAsPdf(this.title, this.fullName, this.userId, this.courseId, this.courseHierarchy.name, marks)
       .subscribe((res: Response) => {
         this.fileUrl = res['result']['fileUrl'];
         console.log(this.fileUrl);

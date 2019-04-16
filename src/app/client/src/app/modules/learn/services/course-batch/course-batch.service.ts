@@ -12,6 +12,7 @@ export class CourseBatchService {
   public updateEvent = new EventEmitter();
   private _enrolledBatchDetails: any;
   private defaultUserList: any;
+  private marksData = {};
   constructor(public searchService: SearchService, public userService: UserService, public content: ContentService,
     public configService: ConfigService,
     public learnerService: LearnerService) { }
@@ -142,5 +143,14 @@ export class CourseBatchService {
         return data.result.response;
       }));
     }
+  }
+  scoredMarks(scoredMarks, maxMarks) {
+    this.marksData = {
+      'scoredMarks': scoredMarks,
+      'maxMarks': maxMarks
+    };
+  }
+  returnMarks() {
+    return this.marksData;
   }
 }
