@@ -35,7 +35,7 @@ export class DiscussionComponent implements OnInit {
   constructor(
     discussionService: DiscussionService, private activatedRoute: ActivatedRoute,
     public courseDiscussionsService: CourseDiscussService, private courseConsumptionService: CourseConsumptionService,
-    public courseBatchService: CourseBatchService, private resourceService: ResourceService) {
+    public courseBatchService: CourseBatchService, public resourceService: ResourceService) {
     this.discussionService = discussionService;
   }
 
