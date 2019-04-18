@@ -150,12 +150,14 @@ export class DataDrivenComponent extends WorkSpace implements OnInit, OnDestroy 
 
     this.checkForPreviousRouteForRedirect();
     if (_.lowerCase(this.contentType) === 'course') {
-      this.getCourseFrameworkId().pipe(takeUntil(this.unsubscribe)).subscribe(data => {
-        this.framework = data;
-        this.fetchFrameworkMetaData();
-      }, err => {
-        this.toasterService.error(this.resourceService.messages.emsg.m0005);
-       });
+      // this.getCourseFrameworkId().pipe(takeUntil(this.unsubscribe)).subscribe(data => {
+      //   this.framework = data;
+      //   this.fetchFrameworkMetaData();
+      // }, err => {
+      //   this.toasterService.error(this.resourceService.messages.emsg.m0005);
+      //  });
+      this.framework = this.getCourseFrameworkId();
+      this.fetchFrameworkMetaData();
     } else {
       /**
      * fetchFrameworkMetaData is called to config the form data and framework data
@@ -337,14 +339,24 @@ export class DataDrivenComponent extends WorkSpace implements OnInit, OnDestroy 
     if (framework) {
       return of(framework);
     } else {
-     return this.frameworkService.getCourseFramework()
-        .pipe(map((data) => {
-          const frameWork = _.get(data.result.response , 'value');
-          this._cacheService.set('course' + 'framework', frameWork, { maxAge: this.browserCacheTtlService.browserCacheTtl });
-          return frameWork;
-        }), catchError((error) => {
-          return of(false);
-        }));
+      const fid = this.userService.frameworkID[0];
+      const response = {
+        'id': 'courseFrameworkId',
+        'field': 'courseFrameworkId',
+        'value': fid
+      };
+      console.log('response', response);
+      const frameWork = _.get(response , 'value');
+      this._cacheService.set('course' + 'framework', frameWork, { maxAge: this.browserCacheTtlService.browserCacheTtl });
+      return frameWork;
+    //  return this.frameworkService.getCourseFramework()
+    //     .pipe(map((data) => {
+    //       const frameWork = _.get(data.result.response , 'value');
+    //       this._cacheService.set('course' + 'framework', frameWork, { maxAge: this.browserCacheTtlService.browserCacheTtl });
+    //       return frameWork;
+    //     }), catchError((error) => {
+    //       return of(false);
+    //     }));
     }
   }
 }

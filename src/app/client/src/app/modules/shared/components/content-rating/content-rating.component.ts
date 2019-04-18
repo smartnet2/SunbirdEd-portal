@@ -22,7 +22,7 @@ export class ContentRatingComponent {
   appTelemetryFeedbackInput: IFeedbackEventInput;
   public telemetryService: TelemetryService;
 
-  constructor(telemetryService: TelemetryService, private activatedRoute: ActivatedRoute, private resourceService: ResourceService) {
+  constructor(telemetryService: TelemetryService, private activatedRoute: ActivatedRoute, public resourceService: ResourceService) {
     this.telemetryService = telemetryService;
   }
 

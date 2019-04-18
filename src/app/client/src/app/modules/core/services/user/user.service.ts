@@ -35,6 +35,7 @@ export class UserService {
    * Contains user profile.
    */
   private _userProfile: IUserProfile;
+  public frameworkID: any;
   /**
    * BehaviorSubject Containing user profile.
    */
@@ -214,6 +215,7 @@ export class UserService {
     }
     this._dims = _.concat(organisationIds, this.channel);
     organisationIds = _.uniq(organisationIds);
+    this.frameworkID = profileData.framework.id;
     this._userProfile = profileData;
     this._userProfile.userRoles = _.uniq(userRoles);
     this._userProfile.orgRoleMap = orgRoleMap;
