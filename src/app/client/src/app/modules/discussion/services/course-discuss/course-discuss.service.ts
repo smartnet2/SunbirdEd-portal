@@ -69,13 +69,14 @@ export class CourseDiscussService {
   }
 
 
-  public retrieveDiscussion(req) {
+  public retrieveDiscussion(req,tagType) {
     const batchId = req;
     const requestBody = {
       'request':
         {
           'contextId': batchId,
-          'type': 'public'
+          'type': 'public',
+          'tagType':tagType
         }
     };
     const channelOptions = {

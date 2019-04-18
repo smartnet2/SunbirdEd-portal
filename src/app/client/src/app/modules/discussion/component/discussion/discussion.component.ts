@@ -33,12 +33,12 @@ export class DiscussionComponent implements OnInit {
   public editorOptions = {
     placeholder: 'insert content...'
   };
-  public telemetryInteractObject: IInteractEventObject;  
+  public telemetryInteractObject: IInteractEventObject;
   constructor(
     discussionService: DiscussionService, private activatedRoute: ActivatedRoute,
     public courseDiscussionsService: CourseDiscussService,
     private resourceService: ResourceService, public toasterService: ToasterService , public router: Router) {
-    this.discussionService = discussionService; 
+    this.discussionService = discussionService;
   }
 
   ngOnInit() {
@@ -51,13 +51,13 @@ export class DiscussionComponent implements OnInit {
       this.batchId = params.batchId ? params.batchId : batchIdentifier;
       console.log('Inside discussion Player' + this.batchId);
       if (this.batchId) {
-        this.courseDiscussionsService.retrieveDiscussion(this.batchId).subscribe((res: any) => {
+        this.courseDiscussionsService.retrieveDiscussion(this.batchId,'batch').subscribe((res: any) => {
           console.log('retirve', res, this.batchId);
           this.discussionThread = res.result.threads;
           this.threadId = this.discussionThread['0'] ? this.discussionThread['0'].id : '';
         });
       } else if (this.contentId) {
-        this.courseDiscussionsService.retrieveDiscussion(this.contentId).subscribe((res: any) => {
+        this.courseDiscussionsService.retrieveDiscussion(this.contentId,'resource').subscribe((res: any) => {
           this.discussionThread = res.result.threads;
           this.threadId = this.discussionThread['0'] ? this.discussionThread['0'].id : '';
         });
@@ -75,9 +75,9 @@ export class DiscussionComponent implements OnInit {
     };
     this.courseDiscussionsService.postDiscussion(req).subscribe((res: any) => {
       if (this.batchId) {
-      this.retreiveThread(this.batchId);
+      this.retreiveThread(this.batchId,'batch');
       } else {
-        this.retreiveThread(this.contentId);
+        this.retreiveThread(this.contentId,'resource');
       }
       this.editorContent = '';
     },
@@ -106,8 +106,8 @@ export class DiscussionComponent implements OnInit {
       return false;
     }
   }
-  retreiveThread(id) {
-    this.courseDiscussionsService.retrieveDiscussion(id).subscribe((res: any) => {
+  retreiveThread(id,tagType) {
+    this.courseDiscussionsService.retrieveDiscussion(id,tagType).subscribe((res: any) => {
       this.discussionThread = res.result.threads;
       if (this.discussionThread.length !== 0) {
         this.threadId = this.discussionThread['0'].id;
@@ -136,9 +136,9 @@ export class DiscussionComponent implements OnInit {
     this.courseDiscussionsService.replyToThread(body).subscribe((res) => {
       this.editorContent = '';
       if (this.batchId) {
-      this.retreiveThread(this.batchId);
+      this.retreiveThread(this.batchId,'batch');
       } else {
-        this.retreiveThread(this.contentId);
+        this.retreiveThread(this.contentId,'resource');
       }
       this.getReplies(this.threadId);
     });
@@ -170,9 +170,9 @@ export class DiscussionComponent implements OnInit {
     this.courseDiscussionsService.likeReply(body).subscribe((res) => {
       this.editorContent = '';
       if (this.batchId) {
-        this.retreiveThread(this.batchId);
+        this.retreiveThread(this.batchId,'batch');
       } else {
-       this.retreiveThread(this.contentId);
+       this.retreiveThread(this.contentId,'resource');
       }
       this.getReplies(this.threadId);
     });
