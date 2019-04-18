@@ -67,15 +67,15 @@ let envVariables = {
   sunbird_azure_report_container_name:  'reports',
   sunbird_azure_account_name: 'sunbirded',
   sunbird_azure_account_key:'wj5UAHKXMN497X/jju3BoZmqieamWKVe8Sro6vKAnTopVKBJdYNKjiCti3oJiKpKngFj4e0EPBRFNzr2eKfRDw==',
-  AZURE_ACCOUNT_NAME: env.julia_azure_account_name,
-  AZURE_ACCOUNT_KEY: env.julia_azure_account_key,
-  AZURE_STORAGE_URL: env.julia_azure_storage_url,
-  CERTIFICATE_STORE_CONTAINER_NAME: env.julia_certificate_storage_container_name,
-  CERTIFICATE_PROVIDER_NAME: env.julia_certificate_provider_name,
-  CERTIFICATE_INSTRUCTOR_NAME: env.julia_certificate_instructor_name,
+  AZURE_ACCOUNT_NAME: env.certificate_azure_account_name,
+  AZURE_ACCOUNT_KEY: env.certificate_azure_account_key,
+  AZURE_STORAGE_URL: env.certificate_azure_storage_url,
+  CERTIFICATE_STORE_CONTAINER_NAME: env.certificate_azure_container_name,
+  CERTIFICATE_PROVIDER_NAME: env.certificate_provider_name,
+  CERTIFICATE_INSTRUCTOR_NAME: env.certificate_instructor_name,
   EMAIL_STORE_AZURE_ACCOUNT_NAME: env.email_azure_account_name,
   EMAIL_STORE_AZURE_ACCOUNT_KEY: env.email_azure_account_key,
-  EMAIL_STORE_CONTAINER_NAME: env.email_azure_account_container_name,
+  EMAIL_STORE_CONTAINER_NAME: env.email_azure_container_name,
 }
 
 envVariables.PORTAL_CASSANDRA_URLS = (env.sunbird_cassandra_urls && env.sunbird_cassandra_urls !== '')
