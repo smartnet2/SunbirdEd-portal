@@ -1,3 +1,4 @@
+
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
@@ -9,7 +10,7 @@ import {
   PlayerConfig, ContentData, ContentUtilsServiceService, ITelemetryShare
 } from '@sunbird/shared';
 import { IInteractEventObject, IInteractEventEdata, IImpressionEventInput } from '@sunbird/telemetry';
-
+import { DiscussionModule } from './../../../discussion/discussion.module';
 /**
  *Component to play content
  */

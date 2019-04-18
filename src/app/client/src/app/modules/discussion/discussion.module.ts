@@ -5,15 +5,17 @@ import { CourseDiscussService } from './services';
 import { DiscussionService } from './services';
 import {HttpClientModule} from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { TelemetryModule } from './../telemetry/telemetry.module';
 
 @NgModule({
   imports: [
     CommonModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    TelemetryModule
   ],
   providers: [CourseDiscussService, DiscussionService],
-  exports: [DiscussionComponent],
+  exports: [DiscussionComponent, TelemetryModule],
   declarations: [DiscussionComponent]
 })
 export class DiscussionModule { }

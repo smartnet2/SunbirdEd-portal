@@ -10,7 +10,7 @@ import {
   ToasterService, ResourceService, ContentData, ContentUtilsServiceService, ITelemetryShare, ConfigService
 } from '@sunbird/shared';
 import { IInteractEventObject, IInteractEventEdata, IImpressionEventInput } from '@sunbird/telemetry';
-
+import { DiscussionModule } from './../../../discussion/discussion.module';
 @Component({
   selector: 'app-collection-player',
   templateUrl: './collection-player.component.html',
