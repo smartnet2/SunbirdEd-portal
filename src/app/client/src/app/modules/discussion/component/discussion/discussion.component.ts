@@ -160,7 +160,7 @@ export class DiscussionComponent implements OnInit, OnChanges {
     console.log(this.replyPostNumber);
   }
   viewMoreComments(postNumber) {
-    (<any>$('.ui.longer.modal')).modal('setting', 'transition', "vertical flip").modal('setting', 'closable', false).modal('show');
+    (<any>$('.ui.large.modal')).modal('setting', 'transition', "vertical flip").modal('setting', 'closable', false).modal('show');
     this.nestedComments = _.filter(_.cloneDeep(this.repliesContent), { post_number: postNumber });
     this.postCancel();
     console.log("Nested Comments");

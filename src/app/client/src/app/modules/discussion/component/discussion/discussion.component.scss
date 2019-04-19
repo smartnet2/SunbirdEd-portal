@@ -119,3 +119,7 @@
     height: 2.25rem;
     padding: .625rem 0 0 0;
 }
+.content {
+    max-height: 500px;
+    overflow-y: scroll;
+}
