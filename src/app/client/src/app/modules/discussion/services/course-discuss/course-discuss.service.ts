@@ -7,6 +7,10 @@ import { DiscussionService } from '../discussions/discussions.service';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 
+
+import { HttpClient } from '@angular/common/http'; 
+import { Observable } from 'rxjs/Observable';
+
 @Injectable()
 export class CourseDiscussService {
   /**
@@ -31,7 +35,7 @@ export class CourseDiscussService {
 
 
   constructor(contentService: ContentService, discussionService: DiscussionService, configService: ConfigService,
-    userService: UserService, public coursesService: CoursesService) {
+    userService: UserService, public coursesService: CoursesService,private http: HttpClient) {
     this.contentService = contentService;
     this.discussionService = discussionService;
     this.configService = configService;
@@ -75,10 +79,10 @@ export class CourseDiscussService {
     const batchId = req;
     const requestBody = {
       'request':
-        {
-          'contextId': batchId,
-          'type': 'public'
-        }
+      {
+        'contextId': batchId,
+        'type': 'public'
+      }
     };
     const channelOptions = {
       url: this.configService.urlConFig.URLS.COURSE.RETRIEVE_DISCUSSION,
@@ -95,12 +99,28 @@ export class CourseDiscussService {
   public replyToThread(req) {
     const threadId = req.threadId;
     const body = req.body;
-    const requestBody = {
-      'request': {
-        'threadId': threadId,
-        'body': body
-      }
-    };
+    const replyPostNumber = req.replyPostNumber;
+    var requestBody = {};
+    console.log("Payload from service");
+    console.log(req);
+    if (req.replyPostNumber != null) {
+      requestBody = {
+        'request': {
+          'threadId': threadId,
+          'body': body,
+          'replyPostNumber': replyPostNumber
+        }
+      };
+    } else {
+      requestBody = {
+        'request': {
+          'threadId': threadId,
+          'body': body
+        }
+      };
+    }
+    console.log("New Payload");
+    console.log(requestBody);
     const channelOptions = {
       url: this.configService.urlConFig.URLS.COURSE.REPLY_TO_THREAD,
       data: requestBody

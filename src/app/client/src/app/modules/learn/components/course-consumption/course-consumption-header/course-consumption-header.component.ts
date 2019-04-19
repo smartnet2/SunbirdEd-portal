@@ -67,6 +67,7 @@ export class CourseConsumptionHeaderComponent implements OnInit, AfterViewInit, 
     private courseProgressService: CourseProgressService, public contentUtilsServiceService: ContentUtilsServiceService,
     public externalUrlPreviewService: ExternalUrlPreviewService, public coursesService: CoursesService, 
     public userService: UserService,private certificateDownloadService: CertificateDownloadService) {
+    if(this.userService.userProfile)
     this.userName = this.userService.userProfile.userName;
     this.userId = this.userService.userid;
   }

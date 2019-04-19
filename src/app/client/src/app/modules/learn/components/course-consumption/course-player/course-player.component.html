@@ -34,7 +34,6 @@
                                     <p class="placeholder-content">{{resourceService?.messages?.stmsg?.m0122}}</p>
                                 </div> 
                             </ng-template>
-                            <app-discussion></app-discussion>
                         </div>
                         <div class='three wide column'>
                             <app-batch-details *ngIf="courseStatus !== 'Unlisted'" [courseId]="courseId" [batchId]="batchId" [enrolledCourse]="enrolledCourse" [enrolledBatchInfo]="enrolledBatchInfo"
@@ -134,6 +133,7 @@
                 </div>
             </div>
             <div class="ui section divider"></div>
+            <app-discussion></app-discussion>
             <div class="two wide column"></div>
             <div class="ui grid">
                 <div class="row">
