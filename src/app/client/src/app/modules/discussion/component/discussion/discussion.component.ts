@@ -4,8 +4,9 @@ import { DiscussionService } from '../../services/discussions/discussions.servic
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { combineLatest, Subscription, Subject } from 'rxjs';
 import { takeUntil, first, mergeMap, map } from 'rxjs/operators';
-import { CourseConsumptionService, CourseBatchService } from '../../../learn/services';
 import { ResourceService } from './../../../shared/services/resource/resource.service';
+import { ToasterService } from './../../../shared/services/toaster/toaster.service';
+import { IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
 
 @Component({
   selector: 'app-discussion',
@@ -19,6 +20,7 @@ export class DiscussionComponent implements OnInit {
 
   private discussionService: DiscussionService;
   public batchId: string;
+  public contentId: string;
   discussionThread: any = [];
   replyContent: any;
   repliesContent: any;
@@ -31,30 +33,31 @@ export class DiscussionComponent implements OnInit {
   public editorOptions = {
     placeholder: 'insert content...'
   };
-
+  public telemetryInteractObject: IInteractEventObject;
   constructor(
     discussionService: DiscussionService, private activatedRoute: ActivatedRoute,
-    public courseDiscussionsService: CourseDiscussService, private courseConsumptionService: CourseConsumptionService,
-    public courseBatchService: CourseBatchService, public resourceService: ResourceService) {
+    public courseDiscussionsService: CourseDiscussService,
+    private resourceService: ResourceService, public toasterService: ToasterService , public router: Router) {
     this.discussionService = discussionService;
   }
 
   ngOnInit() {
     const batchIdentifier: string = this.activatedRoute.snapshot.queryParamMap.get('batchIdentifier');
-    if (batchIdentifier) {
-      this.batchId = batchIdentifier;
-      this.courseDiscussionsService.retrieveDiscussion(this.batchId).subscribe((res: any) => {
-        console.log('retirve', res, this.batchId);
-        this.discussionThread = res.result.threads;
-      });
-    }
+    this.activatedRoute.params.subscribe((params) => {
+      this.contentId = params.contentId || params.collectionId;
+    });
 
     this.activatedRoute.params.subscribe((params) => {
       this.batchId = params.batchId ? params.batchId : batchIdentifier;
       console.log('Inside discussion Player' + this.batchId);
       if (this.batchId) {
-        this.courseDiscussionsService.retrieveDiscussion(this.batchId).subscribe((res: any) => {
+        this.courseDiscussionsService.retrieveDiscussion(this.batchId,'batch').subscribe((res: any) => {
           console.log('retirve', res, this.batchId);
+          this.discussionThread = res.result.threads;
+          this.threadId = this.discussionThread['0'] ? this.discussionThread['0'].id : '';
+        });
+      } else if (this.contentId) {
+        this.courseDiscussionsService.retrieveDiscussion(this.contentId,'resource').subscribe((res: any) => {
           this.discussionThread = res.result.threads;
           this.threadId = this.discussionThread['0'] ? this.discussionThread['0'].id : '';
         });
@@ -62,20 +65,33 @@ export class DiscussionComponent implements OnInit {
     });
   }
   postComment() {
+    const discussTitle = this.batchId ? 'Discussion for batch' + '-' + this.batchId :
+    'Discussion for resource' + '-' + this.contentId;
     const req = {
-      'title': 'Discussion for batch' + '-' + this.batchId,
-      'body': 'Discussion for batch',
-      'contextId': this.batchId,
+      'title': discussTitle,
+      'body': 'Discussion for batch-content',
+      'contextId': this.batchId || this.contentId,
+      'contextType' : this.batchId ? 'batch' : 'resource'
     };
     this.courseDiscussionsService.postDiscussion(req).subscribe((res: any) => {
-      this.retreiveThread(this.batchId);
+      if (this.batchId) {
+      this.retreiveThread(this.batchId,'batch');
+      } else {
+        this.retreiveThread(this.contentId,'resource');
+      }
       this.editorContent = '';
+    },
+    (err: any) => {
+      console.log('the err response', err);
+      if (err.status === '500') {
+      this.toasterService.error(this.resourceService.messages.emsg.m0005);
+      } else {
+        this.toasterService.error(err.error.params.errmsg);
+      }
     });
   }
   startNewConversionClick() {
-    // if (this.batchId) {
       this.postComment();
-    // }
   }
   getReplies(id) {
     this.courseDiscussionsService.getReplies(id).subscribe((res: any) => {
@@ -90,8 +106,8 @@ export class DiscussionComponent implements OnInit {
       return false;
     }
   }
-  retreiveThread(id) {
-    this.courseDiscussionsService.retrieveDiscussion(id).subscribe((res: any) => {
+  retreiveThread(id,tagType) {
+    this.courseDiscussionsService.retrieveDiscussion(id,tagType).subscribe((res: any) => {
       this.discussionThread = res.result.threads;
       if (this.discussionThread.length !== 0) {
         this.threadId = this.discussionThread['0'].id;
@@ -119,7 +135,11 @@ export class DiscussionComponent implements OnInit {
     };
     this.courseDiscussionsService.replyToThread(body).subscribe((res) => {
       this.editorContent = '';
-      this.retreiveThread(this.batchId);
+      if (this.batchId) {
+      this.retreiveThread(this.batchId,'batch');
+      } else {
+        this.retreiveThread(this.contentId,'resource');
+      }
       this.getReplies(this.threadId);
     });
   }
@@ -149,7 +169,11 @@ export class DiscussionComponent implements OnInit {
     }
     this.courseDiscussionsService.likeReply(body).subscribe((res) => {
       this.editorContent = '';
-      this.retreiveThread(this.batchId);
+      if (this.batchId) {
+        this.retreiveThread(this.batchId,'batch');
+      } else {
+       this.retreiveThread(this.contentId,'resource');
+      }
       this.getReplies(this.threadId);
     });
   }
@@ -169,5 +193,12 @@ export class DiscussionComponent implements OnInit {
     //     this.getAllUsersByOrg();
     //   }
     // });
+  }
+  postCommentInteractEdata () {
+    return {
+      id: 'comments',
+      type: 'click',
+      pageid: this.router.url.split('/')[1]
+    };
   }
 }

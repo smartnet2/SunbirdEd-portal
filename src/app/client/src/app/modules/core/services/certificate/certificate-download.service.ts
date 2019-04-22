@@ -6,17 +6,18 @@ import { Injectable } from '@angular/core';
 })
 export class CertificateDownloadService {
 
-  constructor(private http:HttpClient) { }
+  constructor(private http: HttpClient) { }
 
-  public downloadAsPdf(title:string, userName:string, userId, courseId, courseName) {
-    return this.http.post('/certificate/v1/course/download',{
-      "request":{
-        "title":' ',
-      "name":userName,
-      "courseName":courseName,
-      "userId": userId,
-      "courseId": courseId
-      } 
-    })
+  public downloadAsPdf(title: string, userName: string, userId, courseId, courseName, marks) {
+    return this.http.post('/certificate/v1/course/download', {
+      'request': {
+        'title': ' ',
+        'name': userName,
+        'courseName': courseName,
+        'userId': userId,
+        'courseId': courseId,
+        'marks': marks
+      }
+    });
   }
 }

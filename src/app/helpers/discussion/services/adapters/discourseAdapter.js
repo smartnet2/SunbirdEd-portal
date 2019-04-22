@@ -33,7 +33,7 @@ class DiscourseAdapter {
     /**
      * @property {string} discourseEndPoint - An endpoint url for discourse api
      */
-    this.discourseEndPoint = 'http://discourse.idc.tarento.com/'
+    this.discourseEndPoint = 'http://discussion.nuis.in/'
     /**
      * @property {object} discourseUriList - List of discourse uri's
      */
@@ -55,9 +55,9 @@ class DiscourseAdapter {
 
     this.userName = userName
     this.apiAuth = {
-      apiKey: 'ad70c8761eef0b379c8c22104dbc597023322536ec8f6757b8a780f7d3d9c0ae',
+      apiKey: '64dcdb0e17e6a49010b967ab0f3bbbb19762528573913c904c08a06218460b76',
       // apiUserName: 'ntptest102'
-      apiUserName: 'jamespj'
+      apiUserName: 'aqibadmin'
     }
   }
 
@@ -416,9 +416,20 @@ class DiscourseAdapter {
     this.userName = user.userName
     return new Promise((resolve, reject) => {
       let searchTerm = threadData.keyword === undefined ? '' : threadData.keyword + ' '
+      let tagType = "batch__";
+      if (threadData.tagType == "batch") {
+        tagType = "batch__";
+      } else if (threadData.tagType == "resource") {
+        tagType = "resource__";
+      } else {
+        //   // need to change
+        //   tagType = "batch__";
+      }
+      console.log("\n ===============================================================================================tagType", tagType, '\n');
+
       this.createUserIfNotExists(user).then((success) => {
         let filters = {
-          q: searchTerm + '#' + threadData.type + ' tags:batch__' + threadData.contextId,
+          q: searchTerm + '#' + threadData.type + ' tags:' + tagType + threadData.contextId,
           page: 1,
           api_key: this.apiAuth.apiKey,
           api_username: user.userName
@@ -747,21 +758,24 @@ class DiscourseAdapter {
     return new Promise((resolve, reject) => {
       // console.log(file);
       let options = {
-          'api_key': this.apiAuth.apiKey,
-          'api_username': this.userName, //this.apiAuth.apiUserName
-          'type': 'upload',
-          'file': fs.createReadStream("./" + file.file.path),//fs.createReadStream("./"+file.file.path,'utf8'),
+        'api_key': this.apiAuth.apiKey,
+        'api_username': this.userName, //this.apiAuth.apiUserName
+        'type': 'upload',
+        'file': fs.createReadStream("./" + file.file.path), //fs.createReadStream("./"+file.file.path,'utf8'),
 
       }
       console.log(JSON.stringify(options));
 
-      webService.post({url: this.discourseEndPoint + this.discourseUris.filePath, formData: options}, function (err,data,body) {
-        console.log(err,data.statusCode,body);
+      webService.post({
+        url: this.discourseEndPoint + this.discourseUris.filePath,
+        formData: options
+      }, function (err, data, body) {
+        console.log(err, data.statusCode, body);
 
-        if(err){
+        if (err) {
           console.log("uploadFile: Error in catch block", error)
-            // error.reqObj = options
-            return reject(error)
+          // error.reqObj = options
+          return reject(error)
         }
         //  let res = JSON.parse(body)
         console.log("==================================================================================");

@@ -43,8 +43,14 @@ class GroupService {
           updateddate: Date.now().toString()
         })
         let batchMembers = await (classObj.getBatchMembers(contextId, user.token))
+
+        if(batchMembers && batchMembers.length==1){
+          if(!batchMembers[0].userId){
+            batchMembers[0].userId= user.userId
+          }
+        }
         group.save(function (err) {
-          if (err) {
+          if (err) {;
             console.log(err)
             reject(err)
           } else {
@@ -213,6 +219,8 @@ class GroupService {
         createddate: Date.now().toString(),
         updateddate: Date.now().toString()
       })
+
+
       threadConfig.save(function (err) {
         if (err) {
           console.log(err)
