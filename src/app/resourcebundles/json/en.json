@@ -41,7 +41,8 @@
                 "create": "Create",
                 "copyLink": "COPY LINK",
                 "resume": "Resume",
-                "cancelCapitalize": "Cancel"
+                "cancelCapitalize": "Cancel",
+                "reply":"Reply"
             },
             "lbl": {
                 "anncmnt": "Announcement",
@@ -399,8 +400,7 @@
                 "ratingContent": "Help us by Rating us",
                 "typeCharacters": "Type Here....More than 15 characters",
                 "comments": "Comments",
-                "conversation": "Start new conversation",
-                "reply":"Reply"
+                "conversation": "Start new conversation"
             },
             "scttl": {
                 "todo": "To Do",
