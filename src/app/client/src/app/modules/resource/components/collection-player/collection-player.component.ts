@@ -9,7 +9,7 @@ import {
   WindowScrollService, ILoaderMessage, PlayerConfig, ICollectionTreeOptions, NavigationHelperService,
   ToasterService, ResourceService, ContentData, ContentUtilsServiceService, ITelemetryShare, ConfigService
 } from '@sunbird/shared';
-import { IInteractEventObject, IInteractEventEdata, IImpressionEventInput } from '@sunbird/telemetry';
+import { IInteractEventObject, IInteractEventEdata, IImpressionEventInput, IFeedbackObject, IFeedbackEdata } from '@sunbird/telemetry';
 import { DiscussionModule } from './../../../discussion/discussion.module';
 @Component({
   selector: 'app-collection-player',
@@ -99,7 +99,10 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy {
   public contentDetails = [];
   public nextPlaylistItem: any;
   public prevPlaylistItem: any;
+ public showRatingModal: Boolean = false;
 
+  public feedbackModal: Boolean = false;
+  public telemetryFeedbackObject: IFeedbackObject;
   constructor(route: ActivatedRoute, playerService: PlayerService,
     windowScrollService: WindowScrollService, router: Router, public navigationHelperService: NavigationHelperService,
     private toasterService: ToasterService, private resourceService: ResourceService,
@@ -278,6 +281,11 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy {
       type: this.collectionData.contentType,
       ver: this.collectionData.pkgVersion ? this.collectionData.pkgVersion.toString() : '1.0'
     };
+    this.telemetryFeedbackObject = {
+      id: this.collectionId,
+      type: 'resource',
+      ver: '1.0'
+    };
   }
 
   private getCollectionHierarchy(collectionId: string): Observable<{ data: CollectionHierarchyAPI.Content }> {
@@ -334,5 +342,12 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy {
       type: param.contentType,
       ver: param.pkgVersion ? param.pkgVersion.toString() : '1.0'
     }];
+  }
+  public contentProgressEvent(event) {
+    console.log('Event==========>', event);
+    const eid = event.detail.telemetryData.eid;
+    if (eid === 'END' ) {
+      this.showRatingModal = true;
+    }
   }
 }

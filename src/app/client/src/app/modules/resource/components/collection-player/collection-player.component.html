@@ -18,7 +18,7 @@
             </h5>
           </div>
           <div class="twelve wide column">
-            <app-player class="content-player" [playerConfig]="playerConfig | async"></app-player>
+            <app-player class="content-player" (contentProgressEvent)="contentProgressEvent($event)" [playerConfig]="playerConfig | async"></app-player>
           </div>
         </div>
         <div class="ui row pt-0">
@@ -119,13 +119,14 @@
         <app-collection-player-metadata *ngIf=!showPlayer [metaData]="collectionData"></app-collection-player-metadata>
       </div>
     </div>
-    <!-- <div class="row">
+    <div class="row">
       <div class="eight wide column">
         <app-discussion></app-discussion>
       </div>
-    </div> -->
+    </div>
   </div>
 </div>
 <app-share-link [shareLink]="shareLink" [telemetryShareData]="telemetryShareData" *ngIf="sharelinkModal" (close)="sharelinkModal = false">
 </app-share-link>
+<app-content-rating *ngIf='showRatingModal'[feedbackObject]='telemetryFeedbackObject' ></app-content-rating>
 <router-outlet></router-outlet>
