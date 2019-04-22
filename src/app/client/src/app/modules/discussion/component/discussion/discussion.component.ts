@@ -87,13 +87,6 @@ export class DiscussionComponent implements OnInit, OnChanges {
         });
       }
     });
-    // #NUIH change:
-    $(function () {
-      $("#emoticons-1").on('click', function () {
-        $(".fr-popup").find("p").hide();
-      });
-    });
-    // #NUIH change:
   }
   ngOnChanges() { }
   postComment() {
@@ -128,9 +121,6 @@ export class DiscussionComponent implements OnInit, OnChanges {
   getReplies(id) {
     this.courseDiscussionsService.getReplies(id).subscribe((res: any) => {
       this.repliesContent = res.result.thread.replies;
-      $(function () {
-        $(".emoji").hide();
-      });
       console.log("New Response");
       console.log('res', this.repliesContent);
     });
@@ -202,7 +192,8 @@ export class DiscussionComponent implements OnInit, OnChanges {
       this.uploadedFile = null;
       this.replyPostNumber = null;
       this.postBtnText = "Post";
-      $(".close").click();
+      (<any>$('.ui.large.modal')).modal('hide');
+      this.postCancel();
       if (this.batchId) {
         this.retreiveThread(this.batchId, 'batch');
       } else {
