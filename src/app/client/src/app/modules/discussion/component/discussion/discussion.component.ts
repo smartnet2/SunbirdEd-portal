@@ -61,7 +61,7 @@ export class DiscussionComponent implements OnInit, OnChanges {
   public telemetryInteractObject: IInteractEventObject;
   constructor(
     discussionService: DiscussionService, public treeViewService: TreeViewService, private activatedRoute: ActivatedRoute,
-    public courseDiscussionsService: CourseDiscussService, private resourceService: ResourceService, public toasterService: ToasterService, public router: Router) {
+    public courseDiscussionsService: CourseDiscussService, public resourceService: ResourceService, public toasterService: ToasterService, public router: Router) {
     this.discussionService = discussionService;
   }
 
