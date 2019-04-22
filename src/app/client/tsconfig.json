@@ -76,5 +76,9 @@
   },
   "exclude": [
     "**/*.spec.data.ts"
+  ],
+  "include":[
+    "./src",
+    "./node_modules/ngx-quill-editor/*"
   ]
 }
