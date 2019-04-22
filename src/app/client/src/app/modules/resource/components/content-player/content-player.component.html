@@ -56,7 +56,7 @@
                             <p>{{resourceService.messages.imsg.m0036}}</p>
                         </div>
                     </div>
-                    <app-player class="content-player" [playerConfig]="playerConfig"></app-player>
+                    <app-player class="content-player" [playerConfig]="playerConfig" (contentProgressEvent)="contentProgressEvent($event)" ></app-player>
                     <div class="twelve wide column contentMetaSection">
                         <div class="ui stackable grid mt-30">
                             <div class="row">
@@ -91,7 +91,7 @@
                                     <app-content-player-metadata [contentData]="contentData"></app-content-player-metadata>
                                 </div>
                                 <div class="twelve wide column mt-20">
-                                    <!-- <app-discussions></app-discussions> -->
+                                    <app-discussion></app-discussion>
                                 </div>
                             </div>
                             <div *ngIf="contentStatus !== 'Unlisted'" class="four wide column">
@@ -124,4 +124,5 @@
 </div>
 <app-share-link [shareLink]="shareLink" [telemetryShareData]="telemetryShareData" *ngIf="sharelinkModal" (close)="sharelinkModal = false">
 </app-share-link>
+<app-content-rating *ngIf='showRatingModal'[feedbackObject]='telemetryFeedbackObject' ></app-content-rating>
 <router-outlet></router-outlet>

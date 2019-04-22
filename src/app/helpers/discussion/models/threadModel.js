@@ -56,7 +56,8 @@ let listThreadApiSchema = Joi.object().keys({
   request: Joi.object().keys({
     contextId: Joi.string().required(),
     type: Joi.string().required(),
-    keyword: Joi.string()
+    keyword: Joi.string(),
+    tagType: Joi.string().required(),
   }).required()
 })
 

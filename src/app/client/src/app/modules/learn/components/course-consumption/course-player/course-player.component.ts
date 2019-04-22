@@ -293,7 +293,7 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
     const eid = event.detail.telemetryData.eid;
     if (eid === 'END' && !this.validEndEvent(event)) {
       return;
-    }     
+    }
     if (eid === 'END' && this.nextPlaylistItem === undefined) {
       this.showRatingModal = true;
     }

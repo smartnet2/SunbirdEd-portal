@@ -658,7 +658,8 @@ class ThreadController {
             let threadFilters = {
               contextId: listThreadRequest.contextId,
               type: listThreadRequest.type,
-              keyword: listThreadRequest.keyword
+              keyword: listThreadRequest.keyword,
+              tagType: listThreadRequest.tagType
             }
             let user = {
               userName: userProfile.userName

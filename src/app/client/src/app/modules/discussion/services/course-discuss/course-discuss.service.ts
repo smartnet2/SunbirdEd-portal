@@ -52,7 +52,7 @@ export class CourseDiscussService {
         'title': req.title,
         'body': req.body,
         'contextId': contextId,
-        'contextType': 'batch',
+        'contextType': req.contextType,
         'type': 'public',
         'config': {
           'upVote': true,
@@ -68,21 +68,20 @@ export class CourseDiscussService {
     };
     return this.discussionService.post(channelOptions).pipe(map((res: ServerResponse) => {
       return res;
-    }), catchError((err) => {
-      return err;
     }));
 
   }
 
 
-  public retrieveDiscussion(req) {
+  public retrieveDiscussion(req,tagType) {
     const batchId = req;
     const requestBody = {
       'request':
-      {
-        'contextId': batchId,
-        'type': 'public'
-      }
+        {
+          'contextId': batchId,
+          'type': 'public',
+          'tagType':tagType
+        }
     };
     const channelOptions = {
       url: this.configService.urlConFig.URLS.COURSE.RETRIEVE_DISCUSSION,

@@ -11,15 +11,18 @@ import { TreeViewComponent } from './shared/tree-view.component';
 import { TreeView } from './shared/tree-view.directory';
 import { TreeViewService } from './shared/tree-view.service';
 // #NUIH change:
+import { TelemetryModule } from './../telemetry/telemetry.module';
+
 @NgModule({
   imports: [
     CommonModule,
     HttpClientModule,
     FormsModule,
-    QuillEditorModule
+    QuillEditorModule,
+    TelemetryModule
   ],
   providers: [CourseDiscussService, DiscussionService, TreeViewService],
-  exports: [DiscussionComponent],
+  exports: [DiscussionComponent, TelemetryModule],
   declarations: [DiscussionComponent, TreeViewComponent, TreeView]
 })
 export class DiscussionModule { }

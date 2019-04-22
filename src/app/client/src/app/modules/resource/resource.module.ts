@@ -13,6 +13,8 @@ import { BadgingModule } from '@sunbird/badge';
 import { NgInviewModule } from 'angular-inport';
 import { TelemetryModule } from '@sunbird/telemetry';
 import {SharedFeatureModule} from '@sunbird/shared-feature';
+import { DiscussionModule } from './../discussion/discussion.module';
+import { CourseDiscussService } from './../discussion/services/course-discuss/course-discuss.service';
 @NgModule({
   imports: [
     CommonModule,
@@ -22,13 +24,14 @@ import {SharedFeatureModule} from '@sunbird/shared-feature';
     SlickModule,
     FormsModule,
     CoreModule,
-    // DiscussionModule,
+    DiscussionModule,
     NotesModule,
     BadgingModule,
     TelemetryModule,
     NgInviewModule,
     SharedFeatureModule
   ],
+  providers: [CourseDiscussService],
   declarations: [ResourceComponent, CollectionPlayerComponent, ContentPlayerComponent]
 })
 export class ResourceModule {

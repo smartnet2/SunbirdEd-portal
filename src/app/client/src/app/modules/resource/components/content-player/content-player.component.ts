@@ -1,3 +1,4 @@
+
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
@@ -8,8 +9,8 @@ import {
   ConfigService, IUserData, ResourceService, ToasterService, WindowScrollService, NavigationHelperService,
   PlayerConfig, ContentData, ContentUtilsServiceService, ITelemetryShare
 } from '@sunbird/shared';
-import { IInteractEventObject, IInteractEventEdata, IImpressionEventInput } from '@sunbird/telemetry';
-
+import { IInteractEventObject, IInteractEventEdata, IImpressionEventInput, IFeedbackObject, IFeedbackEdata } from '@sunbird/telemetry';
+import { DiscussionModule } from './../../../discussion/discussion.module';
 /**
  *Component to play content
  */
@@ -80,6 +81,10 @@ export class ContentPlayerComponent implements OnInit {
 
   showExtContentMsg = false;
 
+  public showRatingModal: Boolean = false;
+
+  public feedbackModal: Boolean = false;
+  public telemetryFeedbackObject: IFeedbackObject;
   closeUrl: any;
   constructor(public activatedRoute: ActivatedRoute, public navigationHelperService: NavigationHelperService,
     public userService: UserService, public resourceService: ResourceService, public router: Router,
@@ -130,6 +135,11 @@ export class ContentPlayerComponent implements OnInit {
       id: this.contentId,
       type: this.contentData.contentType,
       ver: this.contentData.pkgVersion ? this.contentData.pkgVersion.toString() : '1.0'
+    };
+    this.telemetryFeedbackObject = {
+      id: this.contentId,
+      type: 'resource',
+      ver: '1.0'
     };
   }
   /**
@@ -214,5 +224,12 @@ export class ContentPlayerComponent implements OnInit {
       type: param.contentType,
       ver: param.pkgVersion ? param.pkgVersion.toString() : '1.0'
     }];
+  }
+  public contentProgressEvent(event) {
+    console.log('Event==========>', event);
+    const eid = event.detail.telemetryData.eid;
+    if (eid === 'END' ) {
+      this.showRatingModal = true;
+    }
   }
 }

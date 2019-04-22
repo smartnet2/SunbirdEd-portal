@@ -1,13 +1,15 @@
 <div class="ui fitted divider margin-bottom-20 margin-top-30" *ngIf="batchId"></div>
 <div class="row" *ngIf="batchId">
     <div class="col-md-6">
-        <h4>Comments</h4>
+        <h4>{{resourceService?.frmelmnts?.lbl?.comments}}</h4>
     </div>
     <div class="col-md-6" *ngIf="discussionThread.length === 0">
         <button class="ui green button pull-right" (click)="startNewConversionClick()"><i class="fa fa-paper-plane"
-                aria-hidden="true"></i>&nbsp;&nbsp;Start New
-            Conversation</button>
+                aria-hidden="true"></i>&nbsp;&nbsp;{{resourceService?.frmelmnts?.lbl?.conversation}}</button>
     </div>
+</div>
+<div class="col-md-6" *ngIf="discussionThread.length === 0 && (batchId || contentId)">
+    <button class=" sb-btn sb-btn-primary sb-btn-normal pull-right" (click)="startNewConversionClick()">{{resourceService?.frmelmnts?.lbl?.conversation}}</button>
 </div>
 <div class="row MB30" *ngFor="let thread of discussionThread;let i=index">
     <div class="col-md-12">
@@ -148,17 +150,17 @@
     </div>
     <div class="post_buttom">
         <button class="ui blue button" style="margin-right: 5px" [ngClass]="{'disabled_cursor': isDisabled()}"
-            [disabled]="isDisabled()" (click)="replyToThread()"><i class="fa fa-commenting"
+            [disabled]="isDisabled()" (click)="replyToThread()" appTelemetryInteract [telemetryInteractEdata]="postCommentInteractEdata()"><i class="fa fa-commenting"
                 aria-hidden="true"></i>&nbsp;&nbsp;{{postBtnText}}</button>
         <button class="ui basic button" (click)="postCancel()"><i class="fa fa-times-circle"
-                aria-hidden="true"></i>&nbsp;&nbsp;Cancel</button>
+                aria-hidden="true"></i>&nbsp;&nbsp;{{resourceService?.frmelmnts?.btn?.cancel}}</button>
     </div>
 </div>
 <!-- Nested Comments -->
 <div class="ui large modal">
     <i class="close icon" (click)="postCancel()"></i>
     <div class="header">
-        Comments
+        {{resourceService?.frmelmnts?.lbl?.comments}}
     </div>
     <div class="content">
         <div class="row">
@@ -186,10 +188,10 @@
                     <div class="post_buttom">
                         <button class="ui blue button" style="margin-right: 5px"
                             [ngClass]="{'disabled_cursor': isDisabledforModal()}" [disabled]="isDisabledforModal()"
-                            (click)="replyToThreadFromModal()"><i class="fa fa-commenting"
-                                aria-hidden="true"></i>&nbsp;&nbsp;Reply</button>
+                            (click)="replyToThreadFromModal()" appTelemetryInteract [telemetryInteractEdata]="postCommentInteractEdata()"><i class="fa fa-commenting"
+                                aria-hidden="true"></i>&nbsp;&nbsp;{{resourceService?.frmelmnts?.btn?.reply}}</button>
                         <button class="ui basic button" (click)="postCancel()"><i class="fa fa-times-circle"
-                                aria-hidden="true"></i>&nbsp;&nbsp;Cancel</button>
+                                aria-hidden="true"></i>&nbsp;&nbsp;{{resourceService?.frmelmnts?.btn?.cancel}}</button>
                     </div><br><br>
                 </div>
             </div>
