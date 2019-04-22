@@ -4,7 +4,6 @@ import { DiscussionService } from '../../services/discussions/discussions.servic
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { combineLatest, Subscription, Subject } from 'rxjs';
 import { takeUntil, first, mergeMap, map } from 'rxjs/operators';
-import { CourseConsumptionService, CourseBatchService } from '../../../learn/services'
 import * as _ from 'lodash';
 import { TreeViewService } from '../../shared/tree-view.service';
 import { ResourceService } from './../../../shared/services/resource/resource.service';
@@ -62,8 +61,7 @@ export class DiscussionComponent implements OnInit, OnChanges {
   public telemetryInteractObject: IInteractEventObject;
   constructor(
     discussionService: DiscussionService, public treeViewService: TreeViewService, private activatedRoute: ActivatedRoute,
-    public courseDiscussionsService: CourseDiscussService, private courseConsumptionService: CourseConsumptionService,
-    public courseBatchService: CourseBatchService, private resourceService: ResourceService, public toasterService: ToasterService, public router: Router) {
+    public courseDiscussionsService: CourseDiscussService, private resourceService: ResourceService, public toasterService: ToasterService, public router: Router) {
     this.discussionService = discussionService;
   }
 
