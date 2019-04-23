@@ -1,5 +1,5 @@
-<div class="ui fitted divider margin-bottom-20 margin-top-30" *ngIf="batchId"></div>
-<div class="row" *ngIf="batchId">
+<!-- <div class="ui fitted divider margin-bottom-20 margin-top-30" *ngIf="batchId"></div> -->
+<div class="row" *ngIf="discussionThread.length > 0">
     <div class="col-md-6">
         <h4>{{resourceService?.frmelmnts?.lbl?.comments}}</h4>
     </div>
@@ -130,9 +130,9 @@
         </div>
     </div>
 </div>
-<div class="editor mt-3" style="margin-top:55px !important">
+<div class="editor mt-30" *ngIf="discussionThread.length > 0">
     <!-- #NUIH change: -->
-    <quill-editor [(ngModel)]="editorContent" [options]="editorOptions"></quill-editor>
+    <quill-editor [(ngModel)]="editorContent" [options]="editorOptions" ></quill-editor>
     <!-- <div [froalaEditor]="options" [(froalaModel)]="editorContent"></div><br> -->
     <!-- #NUIH change: -->
     <!-- <textarea class="wmd-input" [(ngModel)]="editorContent" id="wmd-input" placeholder="Type Here....Morethan 15 characters"></textarea> -->
@@ -148,7 +148,7 @@
             title="Choose a file" autocomplete="off" />
     </div>
     <div class="post_buttom">
-        <button class="ui blue button" style="margin-right: 5px" [ngClass]="{'disabled_cursor': isDisabled()}"
+        <button class="ui blue button" style="margin-right: 5px" 
             [disabled]="isDisabled()" (click)="replyToThread()" appTelemetryInteract
             [telemetryInteractEdata]="postCommentInteractEdata()"><i class="fa fa-commenting"
                 aria-hidden="true"></i>&nbsp;&nbsp;{{postBtnText}}</button>
@@ -168,9 +168,9 @@
         </div>
         <div class="row">
             <div class="col-md-11 ml-5">
-                <div class="editor mt-3">
+                <div class="editor mt-30">
                     <!-- #NUIH change: -->
-                    <quill-editor [(ngModel)]="editorContentForModal" [options]="editorOptions"></quill-editor>
+                    <quill-editor [(ngModel)]="editorContentForModal" [options]="editorOptions" ></quill-editor>
                     <!-- <div [froalaEditor]="options" [(froalaModel)]="editorContent"></div><br> -->
                     <!-- #NUIH change: -->
                     <!-- <textarea class="wmd-input" [(ngModel)]="editorContent" id="wmd-input" placeholder="Type Here....Morethan 15 characters"></textarea> -->
