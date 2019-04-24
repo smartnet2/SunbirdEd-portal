@@ -346,7 +346,7 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy {
   public contentProgressEvent(event) {
     console.log('Event==========>', event);
     const eid = event.detail.telemetryData.eid;
-    if (eid === 'END' ) {
+    if (eid === 'END' &&  this.nextPlaylistItem === undefined) {
       this.showRatingModal = true;
     }
   }

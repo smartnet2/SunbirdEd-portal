@@ -1,3 +1,4 @@
+import { DomSanitizer } from '@angular/platform-browser';
 import { Component, OnInit, OnChanges } from '@angular/core';
 import { CourseDiscussService } from '../../services/course-discuss/course-discuss.service';
 import { DiscussionService } from '../../services/discussions/discussions.service';
@@ -18,7 +19,7 @@ import { IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
 export class DiscussionComponent implements OnInit, OnChanges {
   // #NUIH change:
   public nestedComments: any = [];
-  public postBtnText: string = "Post";
+  public postBtnText = 'Post';
   // public options: Object = {
   //   placeholderText: 'Type here...',
   //   charCounterCount: true,
@@ -61,7 +62,8 @@ export class DiscussionComponent implements OnInit, OnChanges {
   public telemetryInteractObject: IInteractEventObject;
   constructor(
     discussionService: DiscussionService, public treeViewService: TreeViewService, private activatedRoute: ActivatedRoute,
-    public courseDiscussionsService: CourseDiscussService, public resourceService: ResourceService, public toasterService: ToasterService, public router: Router) {
+    public courseDiscussionsService: CourseDiscussService, public resourceService: ResourceService,
+    public toasterService: ToasterService, public router: Router) {
     this.discussionService = discussionService;
   }
 
@@ -121,7 +123,7 @@ export class DiscussionComponent implements OnInit, OnChanges {
   getReplies(id) {
     this.courseDiscussionsService.getReplies(id).subscribe((res: any) => {
       this.repliesContent = res.result.thread.replies;
-      console.log("New Response");
+      console.log('New Response');
       console.log('res', this.repliesContent);
     });
   }
@@ -153,27 +155,29 @@ export class DiscussionComponent implements OnInit, OnChanges {
     this.uploadedFile = null;
     this.editorContentForModal = '';
     this.replyPostNumber = null;
-    this.postBtnText = "Post";
+    this.postBtnText = 'Post';
   }
   reply(i) {
     this.discussionThread[i].replyEditor = !this.discussionThread[i].replyEditor;
   }
   getPostNumber(postNumber) {
-    this.postBtnText = "Reply";
-    let scrollingElement = (document.scrollingElement || document.body);
+    this.postBtnText = 'Reply';
+    const scrollingElement = (document.scrollingElement || document.body);
     this.replyPostNumber = postNumber;
     $(scrollingElement).animate({
       scrollTop: document.body.scrollHeight
     }, 700);
-    console.log("Post Number");
+    $('.ql-editor').focus();
+    console.log('Post Number');
     console.log(this.replyPostNumber);
   }
   viewMoreComments(postNumber) {
-    (<any>$('.ui.large.modal')).modal('setting', 'transition', "vertical flip").modal('setting', 'closable', false).modal('show');
+    (<any>$('.ui.large.modal')).modal('setting', 'transition', 'vertical flip').modal('setting', 'closable', false).modal('show');
     this.nestedComments = _.filter(_.cloneDeep(this.repliesContent), { post_number: postNumber });
     this.postCancel();
-    console.log("Nested Comments");
+    console.log('Nested Comments');
     console.log(this.nestedComments);
+   
   }
   replyToThreadFromModal() {
     this.editorContent = this.editorContentForModal;
@@ -191,7 +195,7 @@ export class DiscussionComponent implements OnInit, OnChanges {
       this.editorContentForModal = '';
       this.uploadedFile = null;
       this.replyPostNumber = null;
-      this.postBtnText = "Post";
+      this.postBtnText = 'Post';
       (<any>$('.ui.large.modal')).modal('hide');
       this.postCancel();
       if (this.batchId) {
