@@ -18,6 +18,7 @@ const UploadUtil = require('./uploadUtil')
 const envVariables = require('./../environmentVariablesHelper.js')
 
 const backgroundImg = FileSystem.readFileSync(path.join(__dirname, 'CertBackground.jpg'))
+const backgroundImgMarks = FileSystem.readFileSync(path.join(__dirname, 'CertBackground_marks.jpg'))
 const containerName = envVariables.CERTIFICATE_STORE_CONTAINER_NAME || 'container'
 const certificateInstructor = envVariables.CERTIFICATE_INSTRUCTOR_NAME
 const platformName = envVariables.CERTIFICATE_PLATFORM_NAME
@@ -153,8 +154,9 @@ function createPDF (data, filePath, callback) {
     var instructor = data.instructor || certificateInstructor
     var courseCompletionDate = getCertificateDate(data.createdDate || new Date())
     var courseName = data.courseName
-    var marksScored =  _.isEmpty(data.marks) ? '' : data.marks.scoredMarks + ' / ' +  data.marks.maxMarks
-
+    if(data.marks.scoredMarks !== null) {
+      var marksScored = data.marks ? data.marks.scoredMarks + ' / ' +  data.marks.maxMarks : '';
+    }
     var doc = new PDFDocument({ autoFirstPage: false })
 
     var stream = doc.pipe(FileSystem.createWriteStream(filePath))
@@ -162,14 +164,19 @@ function createPDF (data, filePath, callback) {
     doc.addPage({
       layout: 'landscape'
     })
-
+    if(data.marks.scoredMarks !== null) {
+    doc.image(backgroundImgMarks, {
+      width: 700
+    })
+    doc.font('Helvetica-Bold').fontSize(15).text(marksScored, 230, 398, { align: 'center' })
+  }
+  else {
     doc.image(backgroundImg, {
       width: 700
     })
-
-    doc.font('Helvetica-Bold').fontSize(15).text(title + ' ' + name, 200, 293, { align: 'center' })
-    doc.font('Helvetica-Bold').fontSize(15).text(courseName, 200, 376, { align: 'center' })
-    doc.font('Helvetica-Bold').fontSize(15).text(marksScored, 230, 398, { align: 'center' })
+  }
+  doc.font('Helvetica-Bold').fontSize(15).text(title + ' ' + name, 200, 293, { align: 'center' })
+  doc.font('Helvetica-Bold').fontSize(15).text(courseName, 200, 376, { align: 'center' })
     if(platformName) {
       doc.font('Helvetica').fontSize(15).text(platformName, 200, 416, { align: 'center' })
     }
@@ -211,7 +218,7 @@ function createCertificate (req, res) {
   const courseId = data.courseId
   const courseName = data.courseName
   // Create file name with course name and courseId and courseName date
-  const fileName = courseName + '-' + userId + '-' + courseId + new Date().getTime() + '.pdf'
+  const fileName = courseName + '-' + userId + '-' + courseId + '.pdf'
   // Create local file path
    const filePath = path.join(__dirname, fileName)
   //const filePath = path.join('C:\projects\Tarento\pdfdoc', fileName)
