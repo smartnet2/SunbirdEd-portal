@@ -60,7 +60,10 @@ Plugin.extend({
                 localStorage.setItem("totalScore", totalScore);
                 localStorage.setItem("maxScore", maxScore);
             }
-        } 
+        } else {
+            localStorage.removeItem("totalScore");
+            localStorage.removeItem("maxScore");
+        }
     }
 });
 
