@@ -33,7 +33,7 @@ class DiscourseAdapter {
     /**
      * @property {string} discourseEndPoint - An endpoint url for discourse api
      */
-    this.discourseEndPoint = 'http://discussion.nuis.in/'
+    this.discourseEndPoint = 'https://nulpdiscussions.nuis.in/'
     /**
      * @property {object} discourseUriList - List of discourse uri's
      */
@@ -55,7 +55,7 @@ class DiscourseAdapter {
 
     this.userName = userName
     this.apiAuth = {
-      apiKey: '64dcdb0e17e6a49010b967ab0f3bbbb19762528573913c904c08a06218460b76',
+      apiKey: '6e852101f66ee544c9ceaaeffec944f710f9534395611ab2b5bdd98560b90643',
       // apiUserName: 'ntptest102'
       apiUserName: 'aqibadmin'
     }
