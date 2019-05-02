@@ -33,7 +33,7 @@ class DiscourseAdapter {
     /**
      * @property {string} discourseEndPoint - An endpoint url for discourse api
      */
-    this.discourseEndPoint = 'https://nulpdiscussions.nuis.in/'
+    this.discourseEndPoint = 'http://discussion.nuis.in/'
     /**
      * @property {object} discourseUriList - List of discourse uri's
      */
@@ -55,7 +55,7 @@ class DiscourseAdapter {
 
     this.userName = userName
     this.apiAuth = {
-      apiKey: '6e852101f66ee544c9ceaaeffec944f710f9534395611ab2b5bdd98560b90643',
+      apiKey: '64dcdb0e17e6a49010b967ab0f3bbbb19762528573913c904c08a06218460b76',
       // apiUserName: 'ntptest102'
       apiUserName: 'aqibadmin'
     }
@@ -409,65 +409,68 @@ class DiscourseAdapter {
 
   parseThreadData(topicData) {
     
+    
+    initPostsCall(topicData,function(posts){
 
-    let posts = topicData.post_stream.posts
-    let postData = _.find(posts, {
-      topic_id: topicData.id,
-      post_number: 1 //representing the main comment
-    })
-    let posters = []
-    _.forEach(topicData.details.participants, function (participant) {
-      posters.push({
-        userId: participant.id,
-        userName: participant.username
+      //let posts = topicData.post_stream.posts
+      let postData = _.find(posts, {
+        topic_id: topicData.id,
+        post_number: 1 //representing the main comment
       })
-    })
+      let posters = []
+      _.forEach(topicData.details.participants, function (participant) {
+        posters.push({
+          userId: participant.id,
+          userName: participant.username
+        })
+      })
 
-    let threadData = {
-      id: topicData.id,
-      author: {
-        userName: postData.username,
-        name: postData.name
-      },
+      let threadData = {
+        id: topicData.id,
+        author: {
+          userName: postData.username,
+          name: postData.name
+        },
 
-      body: postData.cooked.substring(postData.cooked.indexOf('>') + 1, postData.cooked.lastIndexOf('<')),
-      title: topicData.title,
-      createdDate: topicData.created_at,
-      repliesCount: posts.length - 1,
-      voteCount: topicData.like_count,
-      read: postData.read,
-      posters: posters,
-      replies: [],
-      actions: this.getThreadActions(postData, false),
-      descId: postData.id,
-      archived: topicData.archived,
-      locked: topicData.closed
-    }
-    let adapter = this
-    _.forEach(posts, function (post, index) {
-      if (post.post_number !== 1 && post.post_type === 1) {
-        let replyData = {
-          id: post.id,
-          userName: post.username,
-          name: post.name,
-          avatar_template: post.avatar_template,
-          body: post.cooked.substring(post.cooked.indexOf('>') + 1, post.cooked.lastIndexOf('<')),
-          post_number: post.post_number,
-          reply_count: post.reply_count,
-          reply_to_post_number: post.reply_to_post_number,
-          flag: null,
-          acceptAnswer: post.accepted_answer,
-          createdDate: post.created_at,
-          read: post.read,
-          replies: []
-        }
-        threadData.replies.push(replyData)
+        body: postData.cooked.substring(postData.cooked.indexOf('>') + 1, postData.cooked.lastIndexOf('<')),
+        title: topicData.title,
+        createdDate: topicData.created_at,
+        repliesCount: posts.length - 1,
+        voteCount: topicData.like_count,
+        read: postData.read,
+        posters: posters,
+        replies: [],
+        actions: this.getThreadActions(postData, false),
+        descId: postData.id,
+        archived: topicData.archived,
+        locked: topicData.closed
       }
+      let adapter = this
+      _.forEach(posts, function (post, index) {
+        if (post.post_number !== 1 && post.post_type === 1) {
+          let replyData = {
+            id: post.id,
+            userName: post.username,
+            name: post.name,
+            avatar_template: post.avatar_template,
+            body: post.cooked.substring(post.cooked.indexOf('>') + 1, post.cooked.lastIndexOf('<')),
+            post_number: post.post_number,
+            reply_count: post.reply_count,
+            reply_to_post_number: post.reply_to_post_number,
+            flag: null,
+            acceptAnswer: post.accepted_answer,
+            createdDate: post.created_at,
+            read: post.read,
+            replies: []
+          }
+          threadData.replies.push(replyData)
+        }
+      })
+      //console.log('threaddata replies -- >>> '+JSON.stringify(threadData.replies))
+      var replies = threadData.replies
+      threadData.replies = this.threadLoopBuilder(replies)
+      return threadData
     })
-    //console.log('threaddata replies -- >>> '+JSON.stringify(threadData.replies))
-    var replies = threadData.replies
-    threadData.replies = this.threadLoopBuilder(replies)
-    return threadData
   }
 
   getThreadActions(threadData, isPost) {
@@ -509,20 +512,9 @@ class DiscourseAdapter {
     this.userName = user.userName
     return new Promise((resolve, reject) => {
       let searchTerm = threadData.keyword === undefined ? '' : threadData.keyword + ' '
-      let tagType = "batch__";
-      if (threadData.tagType == "batch") {
-        tagType = "batch__";
-      } else if (threadData.tagType == "resource") {
-        tagType = "resource__";
-      } else {
-        //   // need to change
-        //   tagType = "batch__";
-      }
-      console.log("\n ===============================================================================================tagType", tagType, '\n');
-
       this.createUserIfNotExists(user).then((success) => {
         let filters = {
-          q: searchTerm + '#' + threadData.type + ' tags:' + tagType + threadData.contextId,
+          q: searchTerm + '#' + threadData.type + ' tags:batch__' + threadData.contextId,
           page: 1,
           api_key: this.apiAuth.apiKey,
           api_username: user.userName
@@ -852,24 +844,21 @@ class DiscourseAdapter {
     return new Promise((resolve, reject) => {
       // console.log(file);
       let options = {
-        'api_key': this.apiAuth.apiKey,
-        'api_username': this.userName, //this.apiAuth.apiUserName
-        'type': 'upload',
-        'file': fs.createReadStream("./" + file.file.path), //fs.createReadStream("./"+file.file.path,'utf8'),
+          'api_key': this.apiAuth.apiKey,
+          'api_username': this.userName, //this.apiAuth.apiUserName
+          'type': 'upload',
+          'file': fs.createReadStream("./" + file.file.path),//fs.createReadStream("./"+file.file.path,'utf8'),
 
       }
       console.log(JSON.stringify(options));
 
-      webService.post({
-        url: this.discourseEndPoint + this.discourseUris.filePath,
-        formData: options
-      }, function (err, data, body) {
-        console.log(err, data.statusCode, body);
+      webService.post({url: this.discourseEndPoint + this.discourseUris.filePath, formData: options}, function (err,data,body) {
+        console.log(err,data.statusCode,body);
 
-        if (err) {
+        if(err){
           console.log("uploadFile: Error in catch block", error)
-          // error.reqObj = options
-          return reject(error)
+            // error.reqObj = options
+            return reject(error)
         }
         //  let res = JSON.parse(body)
         console.log("==================================================================================");
@@ -940,4 +929,53 @@ function removeFieldFromArrayObj(array){
   }
 }
 
+async function initPostsCall(response,callback){
+
+    //adding new code 
+    let posts = response.post_stream.posts
+    let stream = response.post_stream.stream;
+    let stream_length = stream.length;
+
+    if(stream.length > 20){
+      //find 21st ,41st,61st,81st element in that array
+      // 53/20 - 21, 41
+      // 43/20 - 21, 41
+      // 61/20 - 21, 41, 61
+      let looplen = Math.floor(stream_length/20)
+      for(var i=1;i< looplen+1;i++){
+          let id = (20*i)+1;
+          let newResponse =  await requestMorePostsCalls(id)
+          posts = _.concat(posts, newResponse);
+      }
+      let final_posts = Object.values(posts.reduce((acc,cur)=>Object.assign(acc,{[cur.id]:cur}),{}));
+      return callback(final_posts)
+      // 20*1 = 21
+      // 20*2 = 41
+      // 20*3 = 61
+      
+      //[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,......,40,41,42]
+      //removing duplicates in a post
+    }else{
+      return callback(posts)
+    }
+}
+
+function requestMorePostsCalls(id){
+  return new Promise((resolve,reject)=>{
+    request('http://discussion.nuis.in/t/'+id+'.json', function (error, response, body) {
+      if(err){
+        console.log('error:', error); // Print the error if one occurred
+        reject(err);
+      }else{
+        console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+        console.log('body:', body); // Print the HTML for the Google homepage.
+        if(response && response.statusCode && response.statusCode == 200){
+          resolve(body.post_stream.posts)
+        }else{
+          reject(response.statusCode)
+        }
+      }
+    });
+  });
+}
 module.exports = DiscourseAdapter
