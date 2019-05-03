@@ -320,36 +320,6 @@ class DiscourseAdapter {
     return threadList
   }
 
-  threadLoopBuilder(arr){
-
-    var arr_length = arr.length;
-    if(arr_length == 0 || arr_length == 1){
-      return arr;
-    }else if(arr_length == 2){
-      var result = _.filter(arr, function(o) { return o.reply_to_post_number == null });
-      if(result.length == 2){
-        return arr;
-      }else{
-        var result1 = _.filter(arr, function(o) { return o.reply_to_post_number != null });
-        result[0].replies = result1[0]
-        return result;
-      }
-    }else{
-      for(var i=arr.length-2;i>-1;i--){
-        var current = arr[i];
-        var splited_arr = _.cloneDeep(arr).splice(i+1,arr.length);
-        var replies = _.filter(splited_arr, function(o) { return o.reply_to_post_number == current.post_number });
-        if(replies.length > 0){
-            current['replies'] = replies
-            arr[i] = current
-        }
-      }
-      var result = _.filter(arr, function(o) { return o.reply_to_post_number == null });
-      return result;
-    }
-    
-  }
-
   extractThreadData(topicData) {
     // console.log('extractThreadD/ata: data====================================================', JSON.stringify(topicData));
     let posts = topicData.post_stream.posts
@@ -407,72 +377,7 @@ class DiscourseAdapter {
     return threadData
   }
 
-  parseThreadData(topicData) {
-    
-    
-    initPostsCall(topicData,function(posts){
-
-      //let posts = topicData.post_stream.posts
-      let postData = _.find(posts, {
-        topic_id: topicData.id,
-        post_number: 1 //representing the main comment
-      })
-      let posters = []
-      _.forEach(topicData.details.participants, function (participant) {
-        posters.push({
-          userId: participant.id,
-          userName: participant.username
-        })
-      })
-
-      let threadData = {
-        id: topicData.id,
-        author: {
-          userName: postData.username,
-          name: postData.name
-        },
-
-        body: postData.cooked.substring(postData.cooked.indexOf('>') + 1, postData.cooked.lastIndexOf('<')),
-        title: topicData.title,
-        createdDate: topicData.created_at,
-        repliesCount: posts.length - 1,
-        voteCount: topicData.like_count,
-        read: postData.read,
-        posters: posters,
-        replies: [],
-        actions: this.getThreadActions(postData, false),
-        descId: postData.id,
-        archived: topicData.archived,
-        locked: topicData.closed
-      }
-      let adapter = this
-      _.forEach(posts, function (post, index) {
-        if (post.post_number !== 1 && post.post_type === 1) {
-          let replyData = {
-            id: post.id,
-            userName: post.username,
-            name: post.name,
-            avatar_template: post.avatar_template,
-            body: post.cooked.substring(post.cooked.indexOf('>') + 1, post.cooked.lastIndexOf('<')),
-            post_number: post.post_number,
-            reply_count: post.reply_count,
-            reply_to_post_number: post.reply_to_post_number,
-            flag: null,
-            acceptAnswer: post.accepted_answer,
-            createdDate: post.created_at,
-            read: post.read,
-            replies: []
-          }
-          threadData.replies.push(replyData)
-        }
-      })
-      //console.log('threaddata replies -- >>> '+JSON.stringify(threadData.replies))
-      var replies = threadData.replies
-      threadData.replies = this.threadLoopBuilder(replies)
-      return threadData
-    })
-  }
-
+  
   getThreadActions(threadData, isPost) {
     let actions = {}
     _.forEach(threadData.actions_summary, function (action) {
@@ -573,8 +478,8 @@ class DiscourseAdapter {
           //console.log('data/httpcall====================================================', data.response.statusCode);
           if (data.response.statusCode == HttpStatus.OK && data.body) {
             let res = JSON.parse(data.body)
-            var aaa = this.parseThreadData(res)
-            //console.log('aaa', aaa)
+            var aaa = parseThreadData(res,threadId)
+            console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaqqqqqqqqqqqqqqqqqqqqqiiiiiiiiiiiiiiiiiiiiiibbbbbbbbbbbbbbbbbbbb', aaa)
             //console.log('getThreadById - threadId : '+threadId)
             return resolve(aaa)
           } else {
@@ -916,6 +821,96 @@ class DiscourseAdapter {
 
 }
 
+async function parseThreadData(topicData,threadId) {
+    
+  let posts = topicData.post_stream.posts
+  let stream = topicData.post_stream.stream;
+  let stream_length = stream.length;
+  console.log('stream_length is : '+stream_length)
+  console.log('stream_length arr : '+JSON.stringify(stream))
+  if(stream.length > 20){
+    let looplen = Math.floor(stream_length/20)
+    for(var i=1;i< looplen+1;i++){
+        let id = (20*i)+1;
+        console.log('now making a async request !!!-------------------------')
+        console.log('threadId is : '+threadId)
+        let newResponse =  await (requestMorePostsCalls(threadId,id))
+        console.log('now comeplted calling request ----------------- >>>> '+newResponse.length)
+        posts = _.concat(posts, newResponse);
+    }
+    posts = Object.values(posts.reduce((acc,cur)=>Object.assign(acc,{[cur.id]:cur}),{}));   
+  }
+
+  console.log('total posts length is : '+posts.length);
+  //console.log('total posts are : '+JSON.stringify(posts));
+  let postData = _.find(posts, {
+    topic_id: topicData.id,
+    post_number: 1 //representing the main comment
+  })
+  let posters = []
+  _.forEach(topicData.details.participants, function (participant) {
+    posters.push({
+      userId: participant.id,
+      userName: participant.username
+    })
+  })
+
+  let threadData = {
+    id: topicData.id,
+    author: {
+      userName: postData.username,
+      name: postData.name
+    },
+
+    body: postData.cooked.substring(postData.cooked.indexOf('>') + 1, postData.cooked.lastIndexOf('<')),
+    title: topicData.title,
+    createdDate: topicData.created_at,
+    repliesCount: posts.length - 1,
+    voteCount: topicData.like_count,
+    read: postData.read,
+    posters: posters,
+    replies: [],
+    //actions: this.getThreadActions(postData, false),
+    descId: postData.id,
+    archived: topicData.archived,
+    locked: topicData.closed
+  }
+  
+  console.log('length of posts again  -->> '+posts.length)
+  var counter = 1;
+  _.forEach(posts, function (post, index) {
+    if (post.post_number !== 1 && post.post_type === 1) {
+      console.log('value is : '+counter)
+      let replyData = {
+        id: post.id,
+        userName: post.username,
+        name: post.name,
+        avatar_template: post.avatar_template,
+        body: post.cooked.substring(post.cooked.indexOf('>') + 1, post.cooked.lastIndexOf('<')),
+        post_number: post.post_number,
+        reply_count: post.reply_count,
+        reply_to_post_number: post.reply_to_post_number,
+        flag: null,
+        acceptAnswer: post.accepted_answer,
+        createdDate: post.created_at,
+        read: post.read,
+        replies: []
+      }
+      threadData.replies.push(replyData)
+      counter++;
+    }else{
+      console.log('post.post_number is ------ '+post.post_number)
+      console.log('post.post_type is ------ '+post.post_type)
+    }
+  })
+  
+  var replies = threadData.replies
+  console.log('length of replies -->> '+replies.length)
+  threadData.replies = threadLoopBuilder(replies)
+  return threadData
+
+}
+
 function removeFieldFromArrayObj(array){
 
   for(var o in  array){
@@ -929,53 +924,62 @@ function removeFieldFromArrayObj(array){
   }
 }
 
-async function initPostsCall(response,callback){
+function threadLoopBuilder(arr){
 
-    //adding new code 
-    let posts = response.post_stream.posts
-    let stream = response.post_stream.stream;
-    let stream_length = stream.length;
-
-    if(stream.length > 20){
-      //find 21st ,41st,61st,81st element in that array
-      // 53/20 - 21, 41
-      // 43/20 - 21, 41
-      // 61/20 - 21, 41, 61
-      let looplen = Math.floor(stream_length/20)
-      for(var i=1;i< looplen+1;i++){
-          let id = (20*i)+1;
-          let newResponse =  await requestMorePostsCalls(id)
-          posts = _.concat(posts, newResponse);
-      }
-      let final_posts = Object.values(posts.reduce((acc,cur)=>Object.assign(acc,{[cur.id]:cur}),{}));
-      return callback(final_posts)
-      // 20*1 = 21
-      // 20*2 = 41
-      // 20*3 = 61
-      
-      //[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,......,40,41,42]
-      //removing duplicates in a post
+  var arr_length = arr.length;
+  if(arr_length == 0 || arr_length == 1){
+    return arr;
+  }else if(arr_length == 2){
+    var result = _.filter(arr, function(o) { return o.reply_to_post_number == null });
+    if(result.length == 2){
+      return arr;
     }else{
-      return callback(posts)
+      var result1 = _.filter(arr, function(o) { return o.reply_to_post_number != null });
+      result[0].replies = result1[0]
+      return result;
     }
+  }else{
+    for(var i=arr.length-2;i>-1;i--){
+      var current = arr[i];
+      var splited_arr = _.cloneDeep(arr).splice(i+1,arr.length);
+      var replies = _.filter(splited_arr, function(o) { return o.reply_to_post_number == current.post_number });
+      if(replies.length > 0){
+          current['replies'] = replies
+          arr[i] = current
+      }
+    }
+    var result = _.filter(arr, function(o) { return o.reply_to_post_number == null });
+    return result;
+  }
+  
 }
 
-function requestMorePostsCalls(id){
-  return new Promise((resolve,reject)=>{
-    request('http://discussion.nuis.in/t/'+id+'.json', function (error, response, body) {
-      if(err){
-        console.log('error:', error); // Print the error if one occurred
-        reject(err);
-      }else{
-        console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-        console.log('body:', body); // Print the HTML for the Google homepage.
-        if(response && response.statusCode && response.statusCode == 200){
-          resolve(body.post_stream.posts)
-        }else{
-          reject(response.statusCode)
+
+function requestMorePostsCalls(mainthread,id) {
+
+  return new Promise((resolve, reject) => {
+    let options = {
+      method: 'GET',
+      uri: 'http://discussion.nuis.in/t/'+mainthread+'/'+id+'.json'
+    }
+    webService(options, (error, response, body) => {
+      if (error) {
+        reject(error)
+      } else {
+        let res = JSON.parse(response.body)
+        if (response.statusCode == 200 && res.post_stream && res.post_stream.posts) {
+          resolve(res.post_stream.posts)
+        } else {
+          reject({
+            message: res.errors[0] || 'Error in getting user info',
+            status: response.statusCode
+          })
         }
       }
-    });
-  });
+    })
+  })
 }
+
 module.exports = DiscourseAdapter
+
+
