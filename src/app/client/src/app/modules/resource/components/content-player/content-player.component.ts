@@ -9,8 +9,7 @@ import {
   ConfigService, IUserData, ResourceService, ToasterService, WindowScrollService, NavigationHelperService,
   PlayerConfig, ContentData, ContentUtilsServiceService, ITelemetryShare
 } from '@sunbird/shared';
-import { IInteractEventObject, IInteractEventEdata, IImpressionEventInput, IFeedbackObject,
-  TelemetryEventOptions } from '@sunbird/telemetry';
+import { IInteractEventObject, IInteractEventEdata, IImpressionEventInput, IFeedbackObject } from '@sunbird/telemetry';
 import { DiscussionModule } from './../../../discussion/discussion.module';
 /**
  *Component to play content
@@ -29,8 +28,6 @@ export class ContentPlayerComponent implements OnInit {
   closeIntractEdata: IInteractEventEdata;
 
   objectInteract: IInteractEventObject;
-
-  tagOption: TelemetryEventOptions;
 
   sharelinkModal: boolean;
 
