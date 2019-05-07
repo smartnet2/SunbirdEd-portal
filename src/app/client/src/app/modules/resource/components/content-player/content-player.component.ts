@@ -9,7 +9,8 @@ import {
   ConfigService, IUserData, ResourceService, ToasterService, WindowScrollService, NavigationHelperService,
   PlayerConfig, ContentData, ContentUtilsServiceService, ITelemetryShare
 } from '@sunbird/shared';
-import { IInteractEventObject, IInteractEventEdata, IImpressionEventInput, IFeedbackObject, IFeedbackEdata } from '@sunbird/telemetry';
+import { IInteractEventObject, IInteractEventEdata, IImpressionEventInput, IFeedbackObject,
+  TelemetryEventOptions } from '@sunbird/telemetry';
 import { DiscussionModule } from './../../../discussion/discussion.module';
 /**
  *Component to play content
@@ -28,6 +29,8 @@ export class ContentPlayerComponent implements OnInit {
   closeIntractEdata: IInteractEventEdata;
 
   objectInteract: IInteractEventObject;
+
+  tagOption: TelemetryEventOptions;
 
   sharelinkModal: boolean;
 
@@ -126,6 +129,9 @@ export class ContentPlayerComponent implements OnInit {
         subtype: this.activatedRoute.snapshot.data.telemetry.subtype
       }
     };
+    if (this.contentData.contentType === 'Resource') {
+      this.telemetryImpression.object.name = this.contentData.name;
+     }
     this.closeIntractEdata = {
       id: 'content-close',
       type: 'click',
@@ -226,7 +232,6 @@ export class ContentPlayerComponent implements OnInit {
     }];
   }
   public contentProgressEvent(event) {
-    console.log('Event==========>', event);
     const eid = event.detail.telemetryData.eid;
     if (eid === 'END' ) {
       this.showRatingModal = true;

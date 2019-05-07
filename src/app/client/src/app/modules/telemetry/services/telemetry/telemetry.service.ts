@@ -210,6 +210,7 @@ export class TelemetryService {
       id: eventInput.object.id || '',
       type: eventInput.object.type || '',
       ver: eventInput.object.ver || '',
+      name: eventInput.object.name || '',
       rollup: eventInput.object.rollup || {}
     };
     return eventObjectData;

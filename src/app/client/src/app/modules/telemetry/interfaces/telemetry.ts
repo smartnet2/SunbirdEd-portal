@@ -70,6 +70,7 @@ export interface TelemetryObject {
   'id': string;
   'type': string;
   'ver'?: string;
+  'name'?: string;
   'rollup': {};
 }
 export interface TelemetryEventOptions {
@@ -121,6 +122,7 @@ export interface IImpressionEventInput {
     'id': string;
     'type': string;
     'ver'?: string;
+    'name'?: string;
     'section'?: string;
     'rollup'?: {};
   };

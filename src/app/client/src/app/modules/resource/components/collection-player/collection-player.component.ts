@@ -271,6 +271,9 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy {
         subtype: this.route.snapshot.data.telemetry.subtype
       }
     };
+    if (this.collectionData.contentType === 'Collection') {
+      this.telemetryImpression.object.name = this.collectionData.name;
+     }
     this.closeIntractEdata = {
       id: 'collection-close',
       type: 'click',
@@ -344,7 +347,6 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy {
     }];
   }
   public contentProgressEvent(event) {
-    console.log('Event==========>', event);
     const eid = event.detail.telemetryData.eid;
     if (eid === 'END' &&  this.nextPlaylistItem === undefined) {
       this.showRatingModal = true;
