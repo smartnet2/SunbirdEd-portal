@@ -10,7 +10,7 @@ const exec = require('child_process').exec
 // To download editors
 const contentEditor = 'https://s3.ap-south-1.amazonaws.com/ekstep-public-dev/artefacts/editor/content-editor-iframe-1.14.2.zip'
 const collectionEditor = 'https://s3.ap-south-1.amazonaws.com/ekstep-public-dev/artefacts/editor/collection-editor-iframe-1.14.2.zip'
-const genericEditor = 'https://s3.ap-south-1.amazonaws.com/ekstep-public-dev/artefacts/editor/generic-editor-iframe-1.14.2.zip'
+const genericEditor = 'https://s3.ap-south-1.amazonaws.com/tarento-nuih/content-plugin/generic-editor-iframe-1.14.2.zip'
 const editorsDestPath = 'client/src/thirdparty/editors/'
 
 gulp.task('clean:editors', () => {
