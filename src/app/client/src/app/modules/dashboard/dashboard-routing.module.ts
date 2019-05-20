@@ -1,6 +1,6 @@
 import { NgModule, Component } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { OrganisationComponent, CourseConsumptionComponent, CourseProgressComponent, UsageReportsComponent } from './components/';
+import { OrganisationComponent, CourseConsumptionComponent, CourseProgressComponent, UsageReportsComponent, ContentCreationStaticsComponent } from './components/';
 import { AuthGuard } from '../core/guard/auth-gard.service';
 
 const routes: Routes = [
@@ -37,7 +37,15 @@ const routes: Routes = [
       breadcrumbs: [{ label: 'Home', url: '/home' },
       { label: 'Profile', url: '/profile' }, { label: 'Organization Admin Dashboard', url: '' }]
     }
-  }
+  },
+  {
+    path: 'contentcreationstatics', component: ContentCreationStaticsComponent, canActivate: [AuthGuard],
+    data: {
+      roles: 'dashboardRole',
+      telemetry: { env: 'contentcreationstatics', pageid: 'content-creation-statics', type: 'view' },
+      breadcrumbs: [{ label: 'Home', url: '/home' }, { label: 'Content Creation Statics', url: '' }]
+    }
+  },
 ];
 
 @NgModule({
