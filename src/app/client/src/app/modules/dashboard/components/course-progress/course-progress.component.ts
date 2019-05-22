@@ -213,10 +213,12 @@ export class CourseProgressComponent implements OnInit, OnDestroy {
         } else if (isBatchExist) {
           this.selectedOption = this.queryParams.batchIdentifier;
           this.populateCourseDashboardData();
+          this.changeDiscussions();
         } else if (this.batchlist.length === 1 && isBatchExist === undefined) {
           this.queryParams.batchIdentifier = this.batchlist[0].id;
           this.selectedOption =  this.batchlist[0].id;
           this.populateCourseDashboardData();
+          this.changeDiscussions();
         } else {
           this.showWarningDiv = true;
         }
