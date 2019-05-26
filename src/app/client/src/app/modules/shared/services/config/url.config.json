@@ -42,7 +42,8 @@
       "GET_USER_BY_KEY": "user/v1/get",
       "CREATE_V2": "user/v2/create",
       "LOCATION_SEARCH": "data/v1/location/search",
-      "TYPE": "user/v1/type/list"
+      "TYPE": "user/v1/type/list",
+      "READ": "user/v1/read"
     },
     "COMPOSITE": {
       "SEARCH": "composite/v1/search"
@@ -166,6 +167,9 @@
     "OTP": {
       "GENERATE": "otp/v1/generate",
       "VERIFY": "otp/v1/verify"
+    },
+    "ORGANIZATION": {
+      "READ":"org/v1/read"
     }
   }
 }

@@ -16,4 +16,17 @@ export class ReportService {
     };
     return this.publicDataService.post(options);
   }
+  getOrganizationName(data) {
+    const options = {
+      url: this.configService.urlConFig.URLS.ORGANIZATION.READ,
+      data: data
+    };
+    return this.publicDataService.post(options);
+  }
+  getUserDetails(userId) {
+    const options = {
+      url: this.configService.urlConFig.URLS.USER.READ + '/' + userId,
+    };
+    return this.publicDataService.get(options);
+  }
 }
