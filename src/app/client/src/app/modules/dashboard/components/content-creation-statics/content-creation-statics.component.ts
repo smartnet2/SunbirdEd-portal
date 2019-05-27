@@ -119,6 +119,7 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
     let tempObj = _.cloneDeep(responseData);
     var self = this;
     _.map(tempObj, function (obj) {
+      obj.createdOn = self.datePipe.transform(obj.createdOn, 'MM/dd/yyyy');
       if (!_.isEmpty(obj.channel)) {
         obj.OrgName = _.get(_.find(self.allOrgName, { 'channel': obj.channel }), 'OrgName');
       } else {
@@ -129,9 +130,9 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
       } else {
         obj.UserName = '';
       }
-      self.tableData = tempObj;
-      self.initializeColumns();
     });
+    this.tableData = tempObj;
+    this.initializeColumns();
   }
   updateValues(responseData, data, str) {
     if (str === 'Org') {
