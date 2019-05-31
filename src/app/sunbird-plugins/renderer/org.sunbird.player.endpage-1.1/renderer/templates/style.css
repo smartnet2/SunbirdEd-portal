@@ -175,6 +175,9 @@ table {
   padding: 1vw 0vw;
 }
 
+.ps-score-content.time-minwidth {
+  max-width: 320px;
+}
 .ps-chapter-text {
   color: #ffffff;
   font-size: 1.7vw;
