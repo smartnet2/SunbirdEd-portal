@@ -1,7 +1,7 @@
 import { IInteractEventEdata, IInteractEventObject, TelemetryInteractDirective } from '@sunbird/telemetry';
-import { IImpressionEventInput } from './../../../telemetry/interfaces/telemetry';
+import { IImpressionEventInput } from '../../../telemetry/interfaces/telemetry';
 import { Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy } from '@angular/core';
-import { UsageService } from './../../services';
+import { UsageService } from '../../services';
 import * as _ from 'lodash';
 import { DomSanitizer } from '@angular/platform-browser';
 import { UserService } from '@sunbird/core';
@@ -13,12 +13,12 @@ import { DatePipe } from '@angular/common';
 import { OnDelete } from 'fine-uploader/lib/core';
 import { Subject } from 'rxjs';
 @Component({
-  selector: 'app-content-creation-statics',
-  templateUrl: './content-creation-statics.component.html',
-  styleUrls: ['./content-creation-statics.component.scss'],
+  selector: 'app-dept-city-wise-report',
+  templateUrl: './dept-city-wise-report.component.html',
+  styleUrls: ['./dept-city-wise-report.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
+export class DeptCityWiseReportComponent implements OnInit, OnDestroy {
   public unsubscribe = new Subject<void>();
   noResult: boolean = false;
   value: Date;
@@ -28,6 +28,10 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
   tableData: any = [];
   allOrgName: any = [];
   allUserName: any = [];
+  cityList: any = [];
+  departmentList: any = [];
+  selectedCity: Object;
+  selectedDepartment: Object;
   cols: any[];
   noResultMessage: INoResultMessage;
   private activatedRoute: ActivatedRoute;
@@ -38,9 +42,42 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
   ) {
     this.activatedRoute = activatedRoute;
   }
-
   ngOnInit() {
-
+    this.getCityList();
+    this.getDepartmentList();
+  }
+  getCityList() {
+    this.reportService.getCityList({ "request": { "channel": {} } }).subscribe((response) => {
+      if (_.get(response, 'responseCode') === 'OK') {
+        if (response.result.channels.length > 0) {
+          this.cityList = _.reject(response.result.channels, function (obj) {
+            if (obj.name == 'nuis' || obj.name == 'nuis_test' || obj.name == 'niua_test')
+              return obj;
+          });
+        }
+      } else {
+        this.toasterService.error(this.resourceService.messages.emsg.m0007);
+      }
+    }, (err) => {
+      console.log(err);
+      this.toasterService.error(this.resourceService.messages.emsg.m0007);
+    });
+  }
+  getDepartmentList() {
+    this.reportService.getDepartmentList('nulp').subscribe((response) => {
+      if (_.get(response, 'responseCode') === 'OK') {
+        if (response.result.framework.categories.length > 0) {
+          if (!_.isEmpty(_.find(response.result.framework.categories, { code: 'board' }))) {
+            this.departmentList = _.get(_.find(response.result.framework.categories, { code: 'board' }), 'terms');
+          }
+        }
+      } else {
+        this.toasterService.error(this.resourceService.messages.emsg.m0007);
+      }
+    }, (err) => {
+      console.log(err);
+      this.toasterService.error(this.resourceService.messages.emsg.m0007);
+    });
   }
   getContentCreationStaticsReport() {
     const data = {
@@ -131,14 +168,16 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
         obj.UserName = '';
       }
     });
-    this.noResult = false;
-    this.tableData = tempObj;
-    this.initializeColumns();
-    if (_.isEmpty(this.tableData)) {
-      this.noResultMessage = {
-        'messageText': 'messages.stmsg.m0131'
-      };
-      this.noResult = true;
+    if (!_.isEmpty(this.selectedCity) && !_.isEmpty(this.selectedDepartment)) {
+      this.noResult = false;
+      this.tableData = _.filter(_.filter(tempObj, { OrgName: _.get(this.selectedCity, 'name') }), { board: _.get(this.selectedDepartment, 'name') });
+      this.initializeColumns();
+      if (_.isEmpty(this.tableData)) {
+        this.noResultMessage = {
+          'messageText': 'messages.stmsg.m0131'
+        };
+        this.noResult = true;
+      }
     }
   }
   updateValues(responseData, data, str) {
@@ -153,7 +192,7 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
   }
   initializeColumns() {
     this.cols = [
-      { field: 'OrgName', header: 'Organization Name' },
+      // { field: 'OrgName', header: 'Organization Name' },
       { field: 'identifier', header: 'Identifier' },
       { field: 'subject', header: 'Subject' },
       { field: 'medium', header: 'Medium' },
@@ -164,13 +203,15 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
       { field: 'UserName', header: 'Created By' },
       { field: 'name', header: 'Name' },
       { field: 'contentType', header: 'Content Type' },
-      { field: 'board', header: 'Board' },
+      // { field: 'board', header: 'Board' },
       { field: 'status', header: 'Status' }
     ]
   }
   resetFields() {
     this.fromDate = null;
     this.toDate = null;
+    this.selectedCity = null;
+    this.selectedDepartment = null;
   }
   ngOnDestroy() {
     this.unsubscribe.next();

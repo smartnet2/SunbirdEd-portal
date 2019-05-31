@@ -147,7 +147,8 @@
       "INFO": "/info"
     },
     "CHANNEL": {
-      "READ": "channel/v1/read"
+      "READ": "channel/v1/read",
+      "LIST": "channel/v1/list"
     },
     "FRAMEWORK": {
       "READ": "framework/v1/read"

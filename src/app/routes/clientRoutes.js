@@ -60,7 +60,7 @@ module.exports = (app, keycloak) => {
   app.all(['/home', '/home/*', '/announcement', '/announcement/*', '/search', '/search/*',
     '/orgType', '/orgType/*', '/dashboard', '/dashboard/*', '/orgDashboard', '/orgDashboard/*',
     '/workspace', '/workspace/*', '/profile', '/profile/*', '/learn', '/learn/*', '/resources',
-    '/resources/*', '/myActivity', '/myActivity/*','/contentcreationstatics'], keycloak.protect(), indexPage)
+    '/resources/*', '/myActivity', '/myActivity/*','/contentcreationstatics','/citywise','/deptcitywise','/contentdeptwise'], keycloak.protect(), indexPage)
 
   app.all('/:tenantName', (req, res) => {
     tenantId = req.params.tenantName

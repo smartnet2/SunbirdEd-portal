@@ -25,8 +25,29 @@
                             </div>
                         </div>
                     </div>
-                    <div
-                        class="twelve wide tablet two wide computer right aligned top aligned column filter-button my-13">
+                    <div class="six wide mobile three wide tablet three wide computer column my-10">
+                        <div class="field">
+                            <label>Department</label>
+                            <div class="mt-10" style="cursor: pointer">
+                                <p-dropdown [options]="departmentList" [(ngModel)]="selectedDepartment"
+                                    placeholder="Select a Department" optionLabel="name"
+                                    [ngModelOptions]="{standalone: true}">
+                                </p-dropdown>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="six wide mobile three wide tablet three wide computer column my-10">
+                        <div class="field">
+                            <label>Content Type</label>
+                            <div class="mt-10" style="cursor: pointer">
+                                <p-dropdown [options]="contentTypeList" [(ngModel)]="selectedContentType"
+                                    placeholder="Select Content Type" optionLabel="name"
+                                    [ngModelOptions]="{standalone: true}">
+                                </p-dropdown>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="twelve wide tablet two wide computer right aligned top aligned column filter-button">
                         <label class="computer-only mb-5">&nbsp;</label>
                         <button type="button" class="sb-btn sb-btn-normal sb-btn-primary"
                             (click)="getContentCreationStaticsReport();">{{resourceService.frmelmnts?.btn?.submit}}</button>

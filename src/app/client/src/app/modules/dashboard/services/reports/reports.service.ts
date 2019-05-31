@@ -29,4 +29,17 @@ export class ReportService {
     };
     return this.publicDataService.get(options);
   }
+  getCityList(data) {
+    const options = {
+      url: this.configService.urlConFig.URLS.CHANNEL.LIST,
+      data: data
+    };
+    return this.publicDataService.post(options);
+  }
+  getDepartmentList(frameWork: string) {
+    const options = {
+      url: this.configService.urlConFig.URLS.FRAMEWORK.READ + '/' + frameWork,
+    };
+    return this.publicDataService.get(options);
+  }
 }
