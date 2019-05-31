@@ -40,7 +40,7 @@ export class DiscussionComponent implements OnInit, OnChanges {
   public contentId: string;
   discussionThread: any = [];
   replyContent: any;
-  repliesContent: any;
+  repliesContent: any = [];
   threadId: any;
 
 
@@ -81,11 +81,13 @@ export class DiscussionComponent implements OnInit, OnChanges {
           console.log('retirve', res, this.batchId);
           this.discussionThread = res.result.threads;
           this.threadId = this.discussionThread['0'].id;
+          this.getReplies(this.threadId);
         });
       } else if (this.contentId) {
         this.courseDiscussionsService.retrieveDiscussion(this.contentId, 'resource').subscribe((res: any) => {
           this.discussionThread = res.result.threads;
           this.threadId = this.discussionThread['0'] ? this.discussionThread['0'].id : '';
+          this.getReplies(this.threadId);
         });
       }
     });
@@ -144,11 +146,7 @@ export class DiscussionComponent implements OnInit, OnChanges {
     });
   }
   collapse(i, id) {
-    this.discussionThread[i].show = !this.discussionThread[i].show;
     this.getReplies(id);
-  }
-  cancel(i) {
-    this.discussionThread[i].replyEditor = !this.discussionThread[i].replyEditor;
   }
   postCancel() {
     this.editorContent = '';
@@ -156,9 +154,6 @@ export class DiscussionComponent implements OnInit, OnChanges {
     this.editorContentForModal = '';
     this.replyPostNumber = null;
     this.postBtnText = 'Post';
-  }
-  reply(i) {
-    this.discussionThread[i].replyEditor = !this.discussionThread[i].replyEditor;
   }
   getPostNumber(postNumber) {
     this.postBtnText = 'Reply';
@@ -177,7 +172,7 @@ export class DiscussionComponent implements OnInit, OnChanges {
     this.postCancel();
     console.log('Nested Comments');
     console.log(this.nestedComments);
-   
+
   }
   replyToThreadFromModal() {
     this.editorContent = this.editorContentForModal;

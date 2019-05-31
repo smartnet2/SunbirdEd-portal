@@ -288,6 +288,9 @@ module.exports = {
       errtype: options.edata.type || 'SERVER_ERROR',
       stacktrace: options.edata.stacktrace || 'unhandled error'
     }
+    console.log(req.session.rootOrghashTagId);
+    console.log(envHelper.defaultChannelId);
+    console.log(req.get('x-channel-id'));
     let channel = req.session.rootOrghashTagId || req.get('x-channel-id') || envHelper.defaultChannelId
     let dims = _.compact(_.concat(req.session.orgs, channel))
     const context = {
