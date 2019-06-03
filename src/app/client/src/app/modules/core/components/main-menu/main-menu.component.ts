@@ -17,6 +17,11 @@ declare var jQuery: any;
   styleUrls: ['./main-menu.component.scss']
 })
 export class MainMenuComponent implements OnInit {
+  isUpforReview: boolean = false;
+  /**
+  * upForReviewRole  access roles
+  */
+  upForReviewRole: Array<string>;
   /**
    * Workspace access roles
    */
@@ -37,9 +42,9 @@ export class MainMenuComponent implements OnInit {
    * reference of config service.
    */
   public config: ConfigService;
-    /**
-   * user profile details.
-   */
+  /**
+ * user profile details.
+ */
   userProfile: IUserProfile;
   /**
    * reference of Router.
@@ -58,7 +63,7 @@ export class MainMenuComponent implements OnInit {
   * constructor
   */
   constructor(resourceService: ResourceService, userService: UserService, router: Router,
-     permissionService: PermissionService, config: ConfigService, private cacheService: CacheService) {
+    permissionService: PermissionService, config: ConfigService, private cacheService: CacheService) {
     this.resourceService = resourceService;
     this.userService = userService;
     this.permissionService = permissionService;
@@ -79,6 +84,16 @@ export class MainMenuComponent implements OnInit {
       (user: IUserData) => {
         if (user && !user.err) {
           this.userProfile = user.userProfile;
+        }
+      });
+    //Make upfor review as default menu is user has upfor review permission
+    this.upForReviewRole = this.config.rolesConfig.workSpaceRole.upForReviewRole;
+    this.permissionService.permissionAvailable$.subscribe(
+      (permissionAvailable: string) => {
+        if (permissionAvailable && permissionAvailable === 'success') {
+          this.isUpforReview = this.permissionService.checkRolesPermissions(this.upForReviewRole);
+        } else if (permissionAvailable && permissionAvailable === 'error') {
+          this.isUpforReview = false;
         }
       });
   }
@@ -135,7 +150,7 @@ export class MainMenuComponent implements OnInit {
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((urlAfterRedirects: NavigationEnd) => {
       if (_.includes(urlAfterRedirects.url, '/explore')) {
         this.showExploreHeader = true;
-        const url  = urlAfterRedirects.url.split('?')[0].split('/');
+        const url = urlAfterRedirects.url.split('?')[0].split('/');
         if (url.indexOf('explore') === 2) {
           this.exploreRoutingUrl = url[1] + '/' + url[2];
         } else {
@@ -143,7 +158,7 @@ export class MainMenuComponent implements OnInit {
         }
       } else if (_.includes(urlAfterRedirects.url, '/explore-course')) {
         this.showExploreHeader = true;
-        const url  = urlAfterRedirects.url.split('?')[0].split('/');
+        const url = urlAfterRedirects.url.split('?')[0].split('/');
         if (url.indexOf('explore-course') === 2) {
           this.exploreRoutingUrl = url[1] + '/' + url[2];
         } else {
@@ -159,7 +174,12 @@ export class MainMenuComponent implements OnInit {
   navigateToWorkspace() {
     const authroles = this.permissionService.getWorkspaceAuthRoles();
     if (authroles) {
-      return authroles.url;
+      if (!this.isUpforReview) {
+        return authroles.url;
+      }
+      else {
+        return 'workspace/content/upForReview/1';
+      }
     }
   }
 }

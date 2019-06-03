@@ -686,7 +686,7 @@
                 "checklistCancel": "Cancel",
                 "checklistPublish": "Publish",
                 "checkListRequestChanges": "Request Changes",
-                "publish": "PUBLISH",
+                "publish": "APPROVE",
                 "requestChanges": "REQUEST CHANGES",
                 "startcreating": "START CREATING"
             },
