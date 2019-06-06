@@ -1,0 +1,37 @@
+<div class="ui container" [appTelemetryImpression]="telemetryImpression">
+    <form novalidate>
+        <div class="ui grid stackable top aligned my-0">
+            <div class="twelve wide tablet ten wide computer column mobile-p-0">
+                <div class="ui grid">
+                    <div class="six wide mobile three wide tablet three wide computer column my-10">
+                        <div class="field">
+                            <label>City</label>
+                            <div class="mt-10" style="cursor: pointer">
+                                <p-dropdown [options]="cityList" [(ngModel)]="selectedCity" placeholder="Select a City"
+                                    optionLabel="name" [ngModelOptions]="{standalone: true}">
+                                </p-dropdown>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="twelve wide tablet two wide computer right aligned top aligned column filter-button my-13">
+                        <label class="computer-only mb-5">&nbsp;</label>
+                        <button type="button" class="sb-btn sb-btn-normal sb-btn-primary"
+                            (click)="getTotalUsers();">{{resourceService.frmelmnts?.btn?.submit}}</button>
+                        <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-10"
+                            (click)="resetFields();">{{resourceService.frmelmnts?.btn?.reset}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form><br><br>
+    <div class="ui grid" *ngIf="!noResult && totalUsers != null">
+        <div class="twelve wide column">
+            <span><b>{{resourceService.frmelmnts?.lbl?.totalUsers}} : </b></span>
+            <span>{{totalUsers}}</span>
+        </div>
+    </div>
+    <div *ngIf="noResult">
+        <app-no-result [data]="noResultMessage"></app-no-result>
+    </div>
+</div>

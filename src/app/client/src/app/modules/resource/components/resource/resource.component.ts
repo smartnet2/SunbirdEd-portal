@@ -47,45 +47,45 @@ export class ResourceComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.userService.userData$.subscribe(userData => {
       if (userData && !userData.err) {
-          this.frameworkData = _.get(userData.userProfile, 'framework');
+        this.frameworkData = _.get(userData.userProfile, 'framework');
       }
     });
     this.initFilters = true;
     this.hashTagId = this.userService.hashTagId;
     this.dataDrivenFilterEvent.pipe(first())
-    .subscribe((filters: any) => {
-      this.dataDrivenFilters = filters;
-      this.fetchContentOnParamChange();
-      this.setNoResultMessage();
-    });
+      .subscribe((filters: any) => {
+        this.dataDrivenFilters = filters;
+        this.fetchContentOnParamChange();
+        this.setNoResultMessage();
+      });
   }
   public getFilters(filters) {
     const defaultFilters = _.reduce(filters, (collector: any, element) => {
-        if (element.code === 'board') {
-          collector.board = _.get(_.orderBy(element.range, ['index'], ['asc']), '[0].name') || '';
-        }
-        return collector;
-      }, {});
+      if (element.code === 'board') {
+        collector.board = _.get(_.orderBy(element.range, ['index'], ['asc']), '[0].name') || '';
+      }
+      return collector;
+    }, {});
     this.dataDrivenFilterEvent.emit(defaultFilters);
   }
   private fetchContentOnParamChange() {
     combineLatest(this.activatedRoute.params, this.activatedRoute.queryParams)
-    .pipe(
-      tap(data => this.prepareVisits([])), // trigger pageexit if last filter resulted 0 contents
-      delay(5), // to trigger telemetry pageexit event
-      tap(data => {
-        this.showLoader = true;
-        this.setTelemetryData();
-      }),
-      delay(5), // to show loader
-      map((result) => ({params: result[0], queryParams: result[1]})),
-      filter(({queryParams}) => !_.isEqual(this.queryParams, queryParams)), // fetch data if queryParams changed
-      takeUntil(this.unsubscribe$))
-    .subscribe(({params, queryParams}) => {
-      this.queryParams = { ...queryParams };
-      this.carouselData = [];
-      this.fetchPageData();
-    });
+      .pipe(
+        tap(data => this.prepareVisits([])), // trigger pageexit if last filter resulted 0 contents
+        delay(5), // to trigger telemetry pageexit event
+        tap(data => {
+          this.showLoader = true;
+          this.setTelemetryData();
+        }),
+        delay(5), // to show loader
+        map((result) => ({ params: result[0], queryParams: result[1] })),
+        filter(({ queryParams }) => !_.isEqual(this.queryParams, queryParams)), // fetch data if queryParams changed
+        takeUntil(this.unsubscribe$))
+      .subscribe(({ params, queryParams }) => {
+        this.queryParams = { ...queryParams };
+        this.carouselData = [];
+        this.fetchPageData();
+      });
   }
   private fetchPageData() {
     const filters = _.pickBy(this.queryParams, (value: Array<string> | string, key) => {
@@ -95,20 +95,22 @@ export class ResourceComponent implements OnInit, OnDestroy {
       return value.length;
     });
     const softConstraintData = {
-      filters: {channel: this.userService.hashTagId,
-      board: [this.dataDrivenFilters.board]},
+      filters: {
+        channel: this.userService.hashTagId,
+        board: [this.dataDrivenFilters.board]
+      },
       softConstraints: _.get(this.activatedRoute.snapshot, 'data.softConstraints'),
       mode: 'soft'
     };
-    const manipulatedData = this.utilService.manipulateSoftConstraint( _.get(this.queryParams, 'appliedFilters'),
-    softConstraintData, this.frameworkData );
+    const manipulatedData = this.utilService.manipulateSoftConstraint(_.get(this.queryParams, 'appliedFilters'),
+      softConstraintData, this.frameworkData);
     const option: any = {
       source: 'web',
       name: 'Resource',
-      filters: _.get(this.queryParams, 'appliedFilters') ?  filters : {},
-      mode: _.get(manipulatedData, 'mode'),
+      filters: _.get(this.queryParams, 'appliedFilters') ? filters : { board: _.get(this.frameworkData, 'board'), gradeLevel: _.get(this.frameworkData, 'gradeLevel'), medium: _.get(this.frameworkData, 'medium') },
+      // mode: _.get(manipulatedData, 'mode'),
       exists: [],
-      params : this.configService.appConfig.Library.contentApiQueryParams
+      params: this.configService.appConfig.Library.contentApiQueryParams
     };
     // default filters
     //filters: _.get(this.queryParams, 'appliedFilters') ?  filters : {_.get(manipulatedData, 'filters')}
@@ -116,7 +118,7 @@ export class ResourceComponent implements OnInit, OnDestroy {
       option.softConstraints = _.get(manipulatedData, 'softConstraints');
     }
     if (this.queryParams.sort_by) {
-      option.sort_by = {[this.queryParams.sort_by]: this.queryParams.sortType  };
+      option.sort_by = { [this.queryParams.sort_by]: this.queryParams.sortType };
     }
     this.pageApiService.getPageData(option)
       .subscribe(data => {
@@ -127,7 +129,7 @@ export class ResourceComponent implements OnInit, OnDestroy {
         this.showLoader = false;
         this.carouselData = [];
         this.toasterService.error(this.resourceService.messages.fmsg.m0004);
-    });
+      });
   }
   private prepareCarouselData(sections = []) {
     const { constantData, metaData, dynamicFields, slickSize } = this.configService.appConfig.Library;
@@ -164,7 +166,7 @@ export class ResourceComponent implements OnInit, OnDestroy {
   public viewAll(event) {
     const searchQuery = JSON.parse(event.searchQuery);
     const softConstraintsFilter = {
-      board : [this.dataDrivenFilters.board],
+      board: [this.dataDrivenFilters.board],
       channel: this.hashTagId,
     };
     searchQuery.request.filters.softConstraintsFilter = JSON.stringify(softConstraintsFilter);
@@ -172,9 +174,9 @@ export class ResourceComponent implements OnInit, OnDestroy {
     searchQuery.request.filters.exists = searchQuery.request.exists;
     this.cacheService.set('viewAllQuery', searchQuery.request.filters);
     this.cacheService.set('pageSection', event, { maxAge: this.browserCacheTtlService.browserCacheTtl });
-    const queryParams = { ...searchQuery.request.filters, ...this.queryParams}; // , ...this.queryParams
+    const queryParams = { ...searchQuery.request.filters, ...this.queryParams }; // , ...this.queryParams
     const sectionUrl = 'resources/view-all/' + event.name.replace(/\s/g, '-');
-    this.router.navigate([sectionUrl, 1], {queryParams: queryParams});
+    this.router.navigate([sectionUrl, 1], { queryParams: queryParams });
   }
   ngOnDestroy() {
     this.unsubscribe$.next();
@@ -200,9 +202,9 @@ export class ResourceComponent implements OnInit, OnDestroy {
     };
   }
   private setNoResultMessage() {
-      this.noResultMessage = {
-        'message': 'messages.stmsg.m0007',
-        'messageText': 'messages.stmsg.m0006'
-      };
+    this.noResultMessage = {
+      'message': 'messages.stmsg.m0007',
+      'messageText': 'messages.stmsg.m0006'
+    };
   }
 }

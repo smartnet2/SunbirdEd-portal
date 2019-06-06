@@ -473,7 +473,8 @@
                 "staticsreport": "Content Creation Statistics",
                 "citywise": "City Wise",
                 "deptcitywise": "Department and City Wise",
-                "contentdeptwise": "Content Type and Department Wise"
+                "contentdeptwise": "Content Type and Department Wise",
+                "totalUsers":"Total Users"
             },
             "lnk": {
                 "viewall": "View All",
@@ -787,7 +788,8 @@
                 "edit": "Edit",
                 "author": "Author",
                 "courseName": "Module Name",
-                "publhwarng": "You have given some review comments or suggestions, they will be lost if content is published. Do you want to publish?"
+                "publhwarng": "You have given some review comments or suggestions, they will be lost if content is published. Do you want to publish?",
+                "totalUsers": "Total Number of Users"
             },
             "prmpt": {
                 "search": "Search",

@@ -42,4 +42,16 @@ export class ReportService {
     };
     return this.publicDataService.get(options);
   }
+  getUserList() {
+    const options = {
+      url: this.configService.urlConFig.URLS.ADMIN.USER_SEARCH,
+      data: {
+        request: {
+          filters: {},
+          limit: 5000,
+        }
+      }
+    };
+    return this.publicDataService.post(options);
+  }
 }

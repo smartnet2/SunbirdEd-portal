@@ -59,6 +59,10 @@
                                 [permission]='adminDashboard' routerLink="contentdeptwise">
                                 {{resourceService.frmelmnts?.allReports?.contentdeptwise}}
                             </a>
+                            <a class="item" *ngIf='permissionService.permissionAvailable' appPermission
+                                [permission]='adminDashboard' routerLink="totalusers">
+                                {{resourceService.frmelmnts?.allReports?.totalUsers}}
+                            </a>
                         </div>
                     </a>
                     <a class="item" *ngIf='permissionService.permissionAvailable' appPermission
