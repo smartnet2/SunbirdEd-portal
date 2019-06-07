@@ -176,27 +176,30 @@ export class UserUploadComponent implements OnInit, OnDestroy {
   * This method helps to call uploadOrg method to upload a csv file
   */
   openImageBrowser(inputbtn) {
-    if ((this.uploadUserForm.value.provider && this.uploadUserForm.value.externalId) || this.uploadUserForm.value.organisationId) {
       this.bulkUploadError = false;
       this.bulkUploadErrorMessage = '';
       inputbtn.click();
-    } else {
-      this.bulkUploadError = true;
-      this.bulkUploadErrorMessage = this.resourceService.messages.emsg.m0003;
-    }
+    // if ((this.uploadUserForm.value.provider && this.uploadUserForm.value.externalId) || this.uploadUserForm.value.organisationId) {
+    //   this.bulkUploadError = false;
+    //   this.bulkUploadErrorMessage = '';
+    //   inputbtn.click();
+    // } else {
+    //   this.bulkUploadError = true;
+    //   this.bulkUploadErrorMessage = this.resourceService.messages.emsg.m0003;
+    // }
   }
   /**
   * This method helps to upload a csv file and return process id
   */
   uploadUsersCSV(file) {
-    const data = this.uploadUserForm.value;
+    // const data = this.uploadUserForm.value;
     if (file[0] && file[0].name.match(/.(csv)$/i)) {
       this.showLoader = true;
       const formData = new FormData();
       formData.append('user', file[0]);
-      formData.append('orgProvider', data.provider);
-      formData.append('orgExternalId', data.externalId);
-      formData.append('organisationId', data.organisationId);
+      formData.append('orgProvider', '');
+      formData.append('orgExternalId', '');
+      formData.append('organisationId', this.userService.rootOrgId);
       const fd = formData;
       this.fileName = file[0].name;
       this.orgManagementService.bulkUserUpload(fd).pipe(

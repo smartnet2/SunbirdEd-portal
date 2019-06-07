@@ -1,6 +1,6 @@
 <sui-modal 
   [mustScroll]="true" 
-  [isClosable]="false"
+  [isClosable]="true"
   [transitionDuration]="0"
   [size]="'large'"
   class="sb-modal"
@@ -20,7 +20,7 @@
     <div *ngIf="showLoader">
       <app-loader></app-loader>
     </div>
-    <form *ngIf="!processId && !showLoader" class="ui form" id="bulkUsers" [formGroup]="uploadUserForm">
+    <!-- <form *ngIf="!processId && !showLoader" class="ui form" id="bulkUsers" [formGroup]="uploadUserForm">
       <div class="ui grid" *ngIf="!processId">
         <div class="six wide column">
           <div class="required field">
@@ -49,7 +49,7 @@
         </div>
       </div>
 
-    </form>
+    </form> -->
     <div class="ui negative message" *ngIf="bulkUploadError">
       <i class="close icon" (click)="closeBulkUploadError()"></i>
       <p>{{bulkUploadErrorMessage}}</p>
