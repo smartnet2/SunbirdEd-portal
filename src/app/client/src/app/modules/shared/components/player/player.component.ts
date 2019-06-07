@@ -60,11 +60,6 @@ export class PlayerComponent implements OnInit, OnChanges {
     }
   }
   generateContentReadEvent(event: any) {
-    let playerWidth = $('#contentPlayer').width();
-    if (playerWidth) {
-      const iframeHeight = $('#contentPlayer').contents().find('#pdf-canvas').height();
-      $('#contentPlayer').css('height', iframeHeight + 'px');
-    }
     if (event.detail.telemetryData.eid && (event.detail.telemetryData.eid === 'START' ||
     event.detail.telemetryData.eid === 'END')) {
       this.contentProgressEvent.emit(event);
