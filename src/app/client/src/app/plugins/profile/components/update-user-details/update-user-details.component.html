@@ -18,9 +18,9 @@
   <div class="sb-modal-content">
     <form class="ui form" [formGroup]="userDetailsForm">
       <div class="required field">
-        <label *ngIf="!(userDetailsForm?.controls.firstName.touched && userDetailsForm?.controls['firstName'].errors)">{{resourceService?.frmelmnts?.lbl?.firstname}}:</label>
+        <label *ngIf="!(userDetailsForm?.controls.firstName.touched && userDetailsForm?.controls['firstName'].errors)">{{resourceService?.frmelmnts?.lbl?.firstName}}:</label>
         <div class="field">
-          <input formControlName="firstName" type="text" name="firstName" placeholder="{{resourceService?.frmelmnts?.lbl?.firstname}}">
+          <input formControlName="firstName" type="text" name="firstName" placeholder="{{resourceService?.frmelmnts?.lbl?.firstName}}">
         </div>
         <label class="ui basic blue error label p-0" *ngIf="userDetailsForm?.controls.firstName.touched && userDetailsForm?.controls['firstName'].errors && userDetailsForm?.controls['firstName'].errors.required">{{resourceService?.frmelmnts?.lbl?.firstNameRequired}}</label>
         <label class="ui basic blue error label p-0" *ngIf="userDetailsForm?.controls.firstName.touched && userDetailsForm?.controls['firstName'].errors && userDetailsForm?.controls['firstName'].errors.pattern">{{resourceService?.frmelmnts?.lbl?.enterValidName}}</label>
