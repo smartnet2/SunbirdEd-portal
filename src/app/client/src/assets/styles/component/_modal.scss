@@ -18,7 +18,10 @@
         .sb-modal-content {
             min-height: 100px;
             padding: $sb-modal-content-padding;
-            overflow-y: visible;
+            overflow-y: auto;
+            &.profile-page {
+                overflow-y: visible !important;
+            }
         }
         &>.close {
             color: $white-color;
