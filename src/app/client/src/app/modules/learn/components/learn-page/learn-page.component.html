@@ -1,4 +1,4 @@
-<app-prominent-filter [formAction]="'filter'" [frameworkName]="frameWorkName" [pageId]="'course-page'" *ngIf="initFilters" [filterEnv]="filterType"  [ignoreQuery]="['key']" 
+<app-prominent-filter [isShowContentTypeFilter]=false [formAction]="'filter'" [frameworkName]="frameWorkName" [pageId]="'course-page'" *ngIf="initFilters" [filterEnv]="filterType"  [ignoreQuery]="['key']" 
   [accordionDefaultOpen]=true [isShowFilterLabel]=true [showSearchedParam]=true [isShowFilterLabel]=true [hashTagId]="hashTagId" (prominentFilter)="getFilters($event)"></app-prominent-filter>
 <div class="ui container">
   <div [appTelemetryImpression]="telemetryImpression" *ngIf="!showLoader" class="ui grid stackable my-0">

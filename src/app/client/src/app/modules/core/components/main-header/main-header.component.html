@@ -40,28 +40,34 @@
                     </a>
                     <a id="reportsMenu" class="item dropdown-btn" *ngIf='permissionService.permissionAvailable'
                         appPermission [permission]='adminDashboard'>
-                        {{resourceService.frmelmnts?.allReports?.reportTitle}}
+                        <!-- {{resourceService.frmelmnts?.allReports?.reportTitle}} -->
+                        Reports
                         <i class="fa fa-caret-down"></i>
                         <div class="dropdown-container">
                             <a class="item" *ngIf='permissionService.permissionAvailable' appPermission
                                 [permission]='adminDashboard' routerLink="contentcreationstatics">
-                                {{resourceService.frmelmnts?.allReports?.staticsreport}}
+                                <!-- {{resourceService.frmelmnts?.allReports?.staticsreport}} -->
+                                Content Creation Statistics
                             </a>
                             <a class="item" *ngIf='permissionService.permissionAvailable' appPermission
                                 [permission]='adminDashboard' routerLink="citywise">
-                                {{resourceService.frmelmnts?.allReports?.citywise}}
+                                <!-- {{resourceService.frmelmnts?.allReports?.citywise}} -->
+                                City Wise
                             </a>
                             <a class="item" *ngIf='permissionService.permissionAvailable' appPermission
                                 [permission]='adminDashboard' routerLink="deptcitywise">
-                                {{resourceService.frmelmnts?.allReports?.deptcitywise}}
+                                <!-- {{resourceService.frmelmnts?.allReports?.deptcitywise}} -->
+                                Department and City Wise
                             </a>
                             <a class="item" *ngIf='permissionService.permissionAvailable' appPermission
                                 [permission]='adminDashboard' routerLink="contentdeptwise">
-                                {{resourceService.frmelmnts?.allReports?.contentdeptwise}}
+                                <!-- {{resourceService.frmelmnts?.allReports?.contentdeptwise}} -->
+                                Content Type and Department Wise
                             </a>
                             <a class="item" *ngIf='permissionService.permissionAvailable' appPermission
                                 [permission]='adminDashboard' routerLink="totalusers">
-                                {{resourceService.frmelmnts?.allReports?.totalUsers}}
+                                <!-- {{resourceService.frmelmnts?.allReports?.totalUsers}} -->
+                                Total Users
                             </a>
                         </div>
                     </a>

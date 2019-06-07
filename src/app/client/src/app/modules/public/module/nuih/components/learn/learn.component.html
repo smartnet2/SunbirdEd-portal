@@ -78,7 +78,7 @@
                         <div class="container">
                             <div class="ui grid margin-bottom-0 hidden-section">
                                 <div class="twelve wide column">
-                                    <app-prominent-filter appTelemetryInteract
+                                    <app-prominent-filter [isShowContentTypeFilter]=false appTelemetryInteract
                                         [telemetryInteractEdata]="filterIntractEdata" *ngIf="filterType"
                                         [filterEnv]="filterType" [ignoreQuery]="['key', 'language']"
                                         [accordionDefaultOpen]=true [isShowFilterLabel]=true

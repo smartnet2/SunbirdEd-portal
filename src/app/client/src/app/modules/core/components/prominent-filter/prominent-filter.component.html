@@ -7,11 +7,9 @@
             <label class="prominent-filter-heading">
               {{resourceService.frmelmnts?.lbl?.explorecontentfrom}}
             </label>
-            <i class="mobile only large angle down icon link right-floated" 
+            <i class="mobile only large angle down icon link right-floated"
               [ngStyle]="{'transform': collapse === true ? 'rotate(0deg)' : 'rotate(180deg)'}"
-              (click)="collapse = !collapse"
-              title="{{collapse==true?'Expand':'Collapse'}}" popupInverted
-              >
+              (click)="collapse = !collapse" title="{{collapse==true?'Expand':'Collapse'}}" popupInverted>
             </i>
           </div>
           <div class="ui active width-100" [suiCollapse]="collapse">
@@ -20,27 +18,49 @@
                 <div class="twelve wide tablet ten wide computer column mobile-p-0">
                   <div class="ui grid" *ngIf="formFieldProperties">
                     <ng-container *ngIf="formFieldProperties.length <= 4">
-                      <div class="six wide mobile three wide tablet three wide computer column" *ngFor="let field of formFieldProperties">
+                      <div class="six wide mobile three wide tablet three wide computer column"
+                        *ngFor="let field of formFieldProperties">
                         <div class="field">
                           <label class="mb-10">{{field.label}}</label>
                           <ng-container *ngIf="field.inputType==='select' || field.inputType==='multi-select'">
-                              <app-custom-multi-select [inputData]="formInputData[field.code]" [field]="field" (selectedValue)="selectedValue($event, field.code);setFilterInteractData()"></app-custom-multi-select>
+                            <app-custom-multi-select [inputData]="formInputData[field.code]" [field]="field"
+                              (selectedValue)="selectedValue($event, field.code);setFilterInteractData()">
+                            </app-custom-multi-select>
                           </ng-container>
                           <ng-container *ngIf="field.code==='topic'">
-                            <app-topic-picker [selectedTopics]="formInputData[field.code]" [formTopic]="field" (topicChange)="handleTopicChange($event);setFilterInteractData()"></app-topic-picker>
+                            <app-topic-picker [selectedTopics]="formInputData[field.code]" [formTopic]="field"
+                              (topicChange)="handleTopicChange($event);setFilterInteractData()"></app-topic-picker>
                           </ng-container>
+                        </div>
+                      </div>
+                      <div class="six wide mobile three wide tablet three wide computer column"
+                        *ngIf="isShowContentTypeFilter">
+                        <div class="field">
+                          <label class="mb-10">{{resourceService?.frmelmnts?.lbl?.resourcetype}}</label>
+                          <sui-select [(ngModel)]="selectedContentType"
+                            style="border:1px solid #e1e1e1;border-radius:5px;padding: 8px 0 8px 13px;width: 100%"
+                            [options]="allContentTypes" labelField="name" valueField="id" name="contentType"
+                            placeholder="{{resourceService?.frmelmnts?.lbl?.selectContentType}}"
+                            (ngModelChange)="onAfterContentTypeChange($event)">
+                            <sui-select-option *ngFor="let contentType of allContentTypes" [value]="contentType">
+                            </sui-select-option>
+                          </sui-select>
                         </div>
                       </div>
                     </ng-container>
                     <ng-container *ngIf="formFieldProperties.length > 4">
-                      <div class="six wide mobile four wide tablet four wide computer column" *ngFor="let field of formFieldProperties">
+                      <div class="six wide mobile four wide tablet four wide computer column"
+                        *ngFor="let field of formFieldProperties">
                         <div class="field large">
                           <label class="mb-10">{{field.label}}</label>
                           <ng-container *ngIf="field.inputType==='select' || field.inputType==='multi-select'">
-                            <app-custom-multi-select [inputData]="formInputData[field.code]" [field]="field" (selectedValue)="selectedValue($event, field.code);setFilterInteractData()"></app-custom-multi-select>
+                            <app-custom-multi-select [inputData]="formInputData[field.code]" [field]="field"
+                              (selectedValue)="selectedValue($event, field.code);setFilterInteractData()">
+                            </app-custom-multi-select>
                           </ng-container>
                           <ng-container *ngIf="field.code==='topic'">
-                            <app-topic-picker [selectedTopics]="formInputData[field.code]" [formTopic]="field" (topicChange)="handleTopicChange($event);setFilterInteractData()"></app-topic-picker>
+                            <app-topic-picker [selectedTopics]="formInputData[field.code]" [formTopic]="field"
+                              (topicChange)="handleTopicChange($event);setFilterInteractData()"></app-topic-picker>
                           </ng-container>
                         </div>
                       </div>
@@ -49,11 +69,12 @@
                 </div>
                 <div class="twelve wide tablet two wide computer right aligned top aligned column filter-button">
                   <label class="computer-only mb-5">&nbsp;</label>
-                  <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="applyFilters()" appTelemetryInteract [telemetryInteractEdata]="applyFilterInteractEdata">
+                  <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="applyFilters()" appTelemetryInteract
+                    [telemetryInteractEdata]="applyFilterInteractEdata">
                     {{resourceService.frmelmnts?.btn?.submit}}
                   </button>
-                  <button appTelemetryInteract [telemetryInteractEdata]="resetFilterInteractEdata" 
-                  class="sb-btn sb-btn-normal sb-btn-outline-primary ml-10" (click)="resetFilters()">
+                  <button appTelemetryInteract [telemetryInteractEdata]="resetFilterInteractEdata"
+                    class="sb-btn sb-btn-normal sb-btn-outline-primary ml-10" (click)="resetFilters()">
                     {{resourceService.frmelmnts?.btn?.reset}}
                   </button>
                 </div>

@@ -334,6 +334,7 @@
                 "nameRequired": "Name is required",
                 "selectState": "Select state",
                 "selectDistrict": "Select district",
+                "selectContentType": "Select content type",
                 "addDistrict": "Add District",
                 "addState": "Add State",
                 "download": "Download",
