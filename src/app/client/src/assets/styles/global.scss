@@ -140,3 +140,19 @@ input[type=number]::-webkit-outer-spin-button {
 .text-success {
   color: #28a745!important;
 }
+input#keyword {
+  font-size: 12px!important;
+}
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {  
+  /* IE10+ specific styles go here */ 
+  
+  .ui.stackable.grid.mt-30{
+		margin-top:170px!important;
+  }  
+  .ui.segment.br-0.p-0.prominent-filter{
+    margin-top:126px;
+  }
+  section.pt-30.pb-30.d-flex.flex-ai-center.flex-dc {
+    margin-top:120px!important;
+}
+}
