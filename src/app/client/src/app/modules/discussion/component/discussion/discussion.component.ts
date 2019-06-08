@@ -159,9 +159,9 @@ export class DiscussionComponent implements OnInit, OnChanges {
     this.postBtnText = 'Reply';
     const scrollingElement = (document.scrollingElement || document.body);
     this.replyPostNumber = postNumber;
-    $(scrollingElement).animate({
-      scrollTop: document.body.scrollHeight
-    }, 700);
+    // $(scrollingElement).animate({
+    //   scrollBottom: 1000
+    // }, 700);
     $('.ql-editor').focus();
     console.log('Post Number');
     console.log(this.replyPostNumber);
