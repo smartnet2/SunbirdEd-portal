@@ -27,6 +27,7 @@ export class ReportService {
   getUserDetails(userId) {
     const options = {
       url: this.configService.urlConFig.URLS.USER.READ + '/' + userId,
+      header: { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI3MmJlMjQ4ODVkY2Y0ZjI4ODEwNDk4ZDBhY2ZhZGQxYiJ9.VV53QoQ1JLd_5fN7jJjV_vzRWL1J-zNJfJOw4XauWOg' }
     };
     return this.publicDataService.get(options);
   }
