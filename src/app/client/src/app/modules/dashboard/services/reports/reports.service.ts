@@ -1,13 +1,23 @@
 import { Injectable } from '@angular/core';
 import { PublicDataService } from '../../../core/services/public-data/public-data.service';
 import { ConfigService } from '@sunbird/shared';
+import { LearnerService } from '@sunbird/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReportService {
-
-  constructor(private publicDataService: PublicDataService, public configService: ConfigService) { }
+  /**
+ * reference of lerner service.
+ */
+  public learnerService: LearnerService;
+  /**
+  * constructor
+  * @param {LearnerService} learner LearnerService reference
+  */
+  constructor(private publicDataService: PublicDataService, learner: LearnerService, public configService: ConfigService) {
+    this.learnerService = learner;
+  }
 
   getContentCreationStaticsReport(data) {
     const options = {
@@ -25,11 +35,10 @@ export class ReportService {
     return this.publicDataService.post(options);
   }
   getUserDetails(userId) {
-    const options = {
-      url: this.configService.urlConFig.URLS.USER.READ + '/' + userId,
-      header: { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI3MmJlMjQ4ODVkY2Y0ZjI4ODEwNDk4ZDBhY2ZhZGQxYiJ9.VV53QoQ1JLd_5fN7jJjV_vzRWL1J-zNJfJOw4XauWOg' }
+    const option = {
+      url: this.configService.urlConFig.URLS.USER.GET_PROFILE + userId + '?fields=organisations,roles,locations'
     };
-    return this.publicDataService.get(options);
+    return this.learnerService.get(option);
   }
   getCityList(data) {
     const options = {
