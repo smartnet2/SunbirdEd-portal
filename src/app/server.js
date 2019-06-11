@@ -91,6 +91,17 @@ app.all(['/content/data/v1/telemetry', '/action/data/v3/telemetry'],
     proxyReqPathResolver: (req) => require('url').parse(envHelper.TELEMETRY_SERVICE_LOCAL_URL + telemtryEventConfig.endpoint).path
   }))
 
+//Report URLS Added
+app.post(['/api/channel/v1/list', '/api/org/v1/read'], (req, res, next) => {
+  req.headers['Authorization'] = 'Bearer ' + envHelper.PORTAL_API_AUTH_TOKEN
+  next()
+})
+app.post('/api/user/v1/search', (req, res, next) => {
+  req.headers['Authorization'] = 'Bearer ' + envHelper.PORTAL_API_AUTH_TOKEN
+  req.headers['x-authenticated-user-token'] = _.get(req, 'kauth.grant.access_token.token')
+  next()
+})
+
 // middleware to add CORS headers
 function addCorsHeaders(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*')
