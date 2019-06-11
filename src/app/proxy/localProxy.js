@@ -25,7 +25,6 @@ var contentServiceApi = {
   'content/v1/flag/accept': 'v1/content/flag/accept',
   'content/v1/flag/reject': 'v1/content/flag/reject',
   'channel/v1/read': 'v1/channel/read',
-  'channel/v1/list': 'v1/channel/list',
   'framework/v1/read': 'v1/framework/read'
 }
 
@@ -73,8 +72,7 @@ var learnerServiceApi = {
   'org/v1/type/list': 'v1/org/type/list',
   'org/v1/type/create': 'v1/org/type/create',
   'org/v1/type/update': 'v1/org/type/update',
-  'role/read': 'v1/role/read',
-  'org/v1/read': 'v1/org/read'
+  'role/read': 'v1/role/read'
 }
 
 /**
