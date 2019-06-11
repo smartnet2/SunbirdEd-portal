@@ -31,9 +31,6 @@ let PERMISSIONS_HELPER = {
       'ORG_MODERATOR'
     ],
     'user/upload': ['ORG_ADMIN', 'SYSTEM_ADMINISTRATION'],
-    'channel/v1/list': ['ORG_ADMIN', 'SYSTEM_ADMINISTRATION'],
-    'org/v1/read': ['ORG_ADMIN', 'SYSTEM_ADMINISTRATION'],
-    'user/v1/search': ['ORG_ADMIN', 'SYSTEM_ADMINISTRATION'],
     'user/assign/role': ['ORG_ADMIN', 'SYSTEM_ADMINISTRATION'],
     'user/block': ['ORG_ADMIN', 'SYSTEM_ADMINISTRATION'],
     'dashboard/creation': ['ORG_ADMIN', 'SYSTEM_ADMINISTRATION'],
