@@ -22,6 +22,7 @@ export class TotalUserComponent implements OnInit, OnDestroy {
   public unsubscribe = new Subject<void>();
   noResult: boolean = false;
   cityList: any = [];
+  userList: any = [];
   selectedCity: object;
   totalUsers: number;
   noResultMessage: INoResultMessage;
@@ -34,13 +35,40 @@ export class TotalUserComponent implements OnInit, OnDestroy {
     this.activatedRoute = activatedRoute;
   }
   ngOnInit() {
-    this.reportService.getCityList({ "request": { "channel": {} } }).subscribe((response) => {
+    this.getOrgDetails();
+    this.getUserList();
+  }
+  getOrgDetails() {
+    this.cityList = [];
+    const data = {
+      "request": {
+        "filters": {}
+      }
+    };
+    this.reportService.getOrganizationName(data).subscribe((response) => {
       if (_.get(response, 'responseCode') === 'OK') {
-        if (response.result.channels.length > 0) {
-          this.cityList = _.reject(response.result.channels, function (obj) {
-            if (obj.name == 'nuis' || obj.name == 'nuis_test' || obj.name == 'niua_test')
+        if (response.result.response.content.length > 0) {
+          this.cityList = _.map(_.compact(_.reject(response.result.response.content, function (obj) {
+            if (_.lowerCase(obj.orgName) == 'nuis' || _.lowerCase(obj.orgName) == 'test nuis' || _.lowerCase(obj.orgName) == 'test niua' || obj.isRootOrg === false || _.isEmpty(obj.orgName))
               return obj;
+          })), function (obj) {
+            obj['orgName'] = _.lowerCase(obj['orgName']);
+            return obj;
           });
+        }
+      } else {
+        this.toasterService.error(this.resourceService.messages.emsg.m0007);
+      }
+    }, (err) => {
+      console.log(err);
+      this.toasterService.error(this.resourceService.messages.emsg.m0007);
+    });
+  }
+  getUserList() {
+    this.reportService.getUserList().subscribe((response) => {
+      if (_.get(response, 'responseCode') === 'OK') {
+        if (response.result.response.content.length > 0) {
+          this.userList = response.result.response.content;
         }
       } else {
         this.toasterService.error(this.resourceService.messages.emsg.m0007);
@@ -52,20 +80,9 @@ export class TotalUserComponent implements OnInit, OnDestroy {
   }
   getTotalUsers() {
     if (!_.isEmpty(this.selectedCity)) {
-      this.reportService.getUserList().subscribe((response) => {
-        this.totalUsers = null;
-        if (_.get(response, 'responseCode') === 'OK') {
-          if (response.result.response.content.length > 0) {
-            var self = this;
-            this.totalUsers = _.filter(response.result.response.content, { channel: _.get(self.selectedCity, 'name') }).length;
-          }
-        } else {
-          this.toasterService.error(this.resourceService.messages.emsg.m0007);
-        }
-      }, (err) => {
-        console.log(err);
-        this.toasterService.error(this.resourceService.messages.emsg.m0007);
-      });
+      this.totalUsers = null;
+      var self = this;
+      this.totalUsers = _.filter(_.cloneDeep(self.userList), { channel: _.get(self.selectedCity, 'orgName') }).length;
     }
   }
   resetFields() {

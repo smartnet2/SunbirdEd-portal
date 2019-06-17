@@ -28,23 +28,8 @@ export class ReportService {
   }
   getOrganizationName(data) {
     const options = {
-      url: this.configService.urlConFig.URLS.ORGANIZATION.READ,
+      url: this.configService.urlConFig.URLS.ADMIN.ORG_SEARCH,
       data: data,
-      header: { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI3MmJlMjQ4ODVkY2Y0ZjI4ODEwNDk4ZDBhY2ZhZGQxYiJ9.VV53QoQ1JLd_5fN7jJjV_vzRWL1J-zNJfJOw4XauWOg' }
-    };
-    return this.publicDataService.post(options);
-  }
-  getUserDetails(userId) {
-    const option = {
-      url: this.configService.urlConFig.URLS.USER.GET_PROFILE + userId + '?fields=organisations,roles,locations'
-    };
-    return this.learnerService.get(option);
-  }
-  getCityList(data) {
-    const options = {
-      url: this.configService.urlConFig.URLS.CHANNEL.LIST,
-      data: data,
-      header: { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI3MmJlMjQ4ODVkY2Y0ZjI4ODEwNDk4ZDBhY2ZhZGQxYiJ9.VV53QoQ1JLd_5fN7jJjV_vzRWL1J-zNJfJOw4XauWOg' }
     };
     return this.publicDataService.post(options);
   }
@@ -64,6 +49,6 @@ export class ReportService {
         }
       }
     };
-    return this.publicDataService.post(options);
+    return this.learnerService.post(options);
   }
 }

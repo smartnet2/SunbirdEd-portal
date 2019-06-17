@@ -43,25 +43,9 @@ export class DeptCityWiseReportComponent implements OnInit, OnDestroy {
     this.activatedRoute = activatedRoute;
   }
   ngOnInit() {
-    this.getCityList();
     this.getDepartmentList();
-  }
-  getCityList() {
-    this.reportService.getCityList({ "request": { "channel": {} } }).subscribe((response) => {
-      if (_.get(response, 'responseCode') === 'OK') {
-        if (response.result.channels.length > 0) {
-          this.cityList = _.reject(response.result.channels, function (obj) {
-            if (obj.name == 'nuis' || obj.name == 'nuis_test' || obj.name == 'niua_test')
-              return obj;
-          });
-        }
-      } else {
-        this.toasterService.error(this.resourceService.messages.emsg.m0007);
-      }
-    }, (err) => {
-      console.log(err);
-      this.toasterService.error(this.resourceService.messages.emsg.m0007);
-    });
+    this.getOrgDetails();
+    this.getUserDetails();
   }
   getDepartmentList() {
     this.reportService.getDepartmentList('nulp').subscribe((response) => {
@@ -99,7 +83,33 @@ export class DeptCityWiseReportComponent implements OnInit, OnDestroy {
     this.reportService.getContentCreationStaticsReport(data).subscribe((response) => {
       if (_.get(response, 'responseCode') === 'OK') {
         if (response.result.content.length > 0) {
-          this.getOrgDetails(response.result.content);
+          this.tableData = [];
+          let tempObj = _.cloneDeep(response.result.content);
+          var self = this;
+          _.map(tempObj, function (obj) {
+            obj.createdOn = self.datePipe.transform(obj.createdOn, 'MM/dd/yyyy');
+            if (!_.isEmpty(obj.channel)) {
+              obj.OrgName = _.lowerCase(_.get(_.find(self.allOrgName, { 'id': obj.channel }), 'orgName'));
+            } else {
+              obj.OrgName = '';
+            }
+            if (!_.isEmpty(obj.createdBy)) {
+              obj.UserName = _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'firstName') + " " + _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'lastName');
+            } else {
+              obj.UserName = '';
+            }
+          });
+          if (!_.isEmpty(this.selectedCity) && !_.isEmpty(this.selectedDepartment)) {
+            this.noResult = false;
+            this.tableData = _.filter(_.filter(tempObj, { OrgName: _.get(this.selectedCity, 'orgName') }), { board: _.get(this.selectedDepartment, 'name') });
+            this.initializeColumns();
+            if (_.isEmpty(this.tableData)) {
+              this.noResultMessage = {
+                'messageText': 'messages.stmsg.m0131'
+              };
+              this.noResult = true;
+            }
+          }
         }
       } else {
         this.toasterService.error(this.resourceService.messages.emsg.m0007);
@@ -109,86 +119,47 @@ export class DeptCityWiseReportComponent implements OnInit, OnDestroy {
       this.toasterService.error(this.resourceService.messages.emsg.m0007);
     });
   }
-  getOrgDetails(responseData) {
+  getOrgDetails() {
     this.allOrgName = [];
-    var self = this;
-    _.map(_.filter(_.uniqBy(responseData, 'channel'), 'channel'), function (obj) {
-      self.reportService.getOrganizationName({ "request": { "organisationId": obj['channel'] } }).subscribe((response) => {
-        if (_.get(response, 'responseCode') === 'OK') {
-          if (response.result.response.channel != undefined) {
-            self.allOrgName.push({ 'channel': obj['channel'], 'OrgName': response.result.response.channel });
-            if (self.allOrgName.length === _.filter(_.uniqBy(responseData, 'channel'), 'channel').length) {
-              self.updateValues(responseData, self.allOrgName, 'Org');
-            }
-          }
-        } else {
-          self.toasterService.error(self.resourceService.messages.emsg.m0007);
+    const data = {
+      "request": {
+        "filters": {}
+      }
+    };
+    this.reportService.getOrganizationName(data).subscribe((response) => {
+      if (_.get(response, 'responseCode') === 'OK') {
+        if (response.result.response.content.length > 0) {
+          this.allOrgName = response.result.response.content;
+          this.cityList = _.map(_.compact(_.reject(_.cloneDeep(response.result.response.content), function (obj) {
+            if (_.lowerCase(obj.orgName) == 'nuis' || _.lowerCase(obj.orgName) == 'test nuis' || _.lowerCase(obj.orgName) == 'test niua' || obj.isRootOrg === false || _.isEmpty(obj.orgName))
+              return obj;
+          })), function (obj) {
+            obj['orgName'] = _.lowerCase(obj['orgName']);
+            return obj;
+          });
         }
-      }, (err) => {
-        console.log(err);
-        self.toasterService.error(self.resourceService.messages.emsg.m0007);
-      });
+      } else {
+        this.toasterService.error(this.resourceService.messages.emsg.m0007);
+      }
+    }, (err) => {
+      console.log(err);
+      this.toasterService.error(this.resourceService.messages.emsg.m0007);
     });
   }
-  getUserDetails(responseData) {
+  getUserDetails() {
     this.allUserName = [];
-    var self = this;
-    _.map(_.filter(_.uniqBy(responseData, 'createdBy'), 'createdBy'), function (obj) {
-      self.reportService.getUserDetails(obj['createdBy']).subscribe((response) => {
-        if (_.get(response, 'responseCode') === 'OK') {
-          // if (!_.isEmpty(response.result.response.firstName) && !_.isEmpty(response.result.response.lastName)) {
-          self.allUserName.push({ 'createdBy': obj['createdBy'], 'UserName': response.result.response.firstName + ' ' + response.result.response.lastName });
-          if (self.allUserName.length === _.filter(_.uniqBy(responseData, 'createdBy'), 'createdBy').length) {
-            self.updateValues(responseData, self.allUserName, 'User');
-          }
-          // }
-        } else {
-          self.toasterService.error(self.resourceService.messages.emsg.m0007);
+    this.reportService.getUserList().subscribe((response) => {
+      if (_.get(response, 'responseCode') === 'OK') {
+        if (response.result.response.content.length > 0) {
+          this.allUserName = response.result.response.content;
         }
-      }, (err) => {
-        console.log(err);
-        self.toasterService.error(self.resourceService.messages.emsg.m0007);
-      });
-    });
-  }
-  builTableData(responseData) {
-    this.tableData = [];
-    let tempObj = _.cloneDeep(responseData);
-    var self = this;
-    _.map(tempObj, function (obj) {
-      obj.createdOn = self.datePipe.transform(obj.createdOn, 'MM/dd/yyyy');
-      if (!_.isEmpty(obj.channel)) {
-        obj.OrgName = _.get(_.find(self.allOrgName, { 'channel': obj.channel }), 'OrgName');
       } else {
-        obj.OrgName = '';
+        this.toasterService.error(this.resourceService.messages.emsg.m0007);
       }
-      if (!_.isEmpty(obj.createdBy)) {
-        obj.UserName = _.get(_.find(self.allUserName, { 'createdBy': obj.createdBy }), 'UserName');
-      } else {
-        obj.UserName = '';
-      }
+    }, (err) => {
+      console.log(err);
+      this.toasterService.error(this.resourceService.messages.emsg.m0007);
     });
-    if (!_.isEmpty(this.selectedCity) && !_.isEmpty(this.selectedDepartment)) {
-      this.noResult = false;
-      this.tableData = _.filter(_.filter(tempObj, { OrgName: _.get(this.selectedCity, 'name') }), { board: _.get(this.selectedDepartment, 'name') });
-      this.initializeColumns();
-      if (_.isEmpty(this.tableData)) {
-        this.noResultMessage = {
-          'messageText': 'messages.stmsg.m0131'
-        };
-        this.noResult = true;
-      }
-    }
-  }
-  updateValues(responseData, data, str) {
-    if (str === 'Org') {
-      this.allOrgName = data;
-      this.getUserDetails(responseData);
-    }
-    if (str === 'User') {
-      this.allUserName = data;
-      this.builTableData(responseData);
-    }
   }
   initializeColumns() {
     this.cols = [
