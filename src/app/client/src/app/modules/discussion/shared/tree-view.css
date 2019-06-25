@@ -1,3 +1,9 @@
 .cursor_pointer {
     cursor: pointer;
 }
+.filetype-info {
+    display: block;
+    font-size: 12px;
+    margin-top: 3px;
+    color: #616161;
+}

@@ -1,7 +1,8 @@
 <!-- <div class="ui fitted divider margin-bottom-20 margin-top-30" *ngIf="batchId"></div> -->
 <div class="row" *ngIf="discussionThread.length > 0">
     <div class="col-md-6">
-        <h4>{{resourceService?.frmelmnts?.lbl?.comments}}</h4>
+        <h4><i class="fa fa-comments-o" aria-hidden="true"></i>&nbsp;{{resourceService?.frmelmnts?.lbl?.comments}}
+            ({{totalCommentsCount}})</h4>
     </div>
 </div>
 <div *ngIf="discussionThread.length > 0" style="margin:7px 0;" class="ui section divider"></div>
@@ -44,15 +45,17 @@
                                 <!-- <div class="ui section divider"></div> -->
                                 <div class="row">
                                     <div class="col-md-12" *ngIf="repliesContent.length==0">
-                                        No comments found!...
+                                        No comments found.
                                     </div>
                                     <div class="col-md-12" *ngFor="let firstLevelReply of repliesContent;"
                                         style="line-height:25px">
                                         <strong>{{firstLevelReply.name}}</strong>
+                                        <span
+                                            class="filetype-info text-primary">{{firstLevelReply.createdDate | date:'MMMM dd, y'}}
+                                            at {{firstLevelReply.createdDate | date:'hh:ss a'}}</span>
                                         <!-- <P *ngIf="!parseBody(reply.body)">{{reply.body}}</P> -->
-                                        <div *ngIf="!parseBody(firstLevelReply.body)">{{firstLevelReply.body}}</div>
-                                        <div [innerHTML]="firstLevelReply.body" *ngIf="parseBody(firstLevelReply.body)">
-                                        </div>
+                                        <!-- <div *ngIf="!parseBody(firstLevelReply.body)">{{firstLevelReply.body}}</div> -->
+                                        <div [innerHTML]="firstLevelReply.body"></div>
                                         <div class="text-primary cursor_pointer"
                                             (click)=getPostNumber(firstLevelReply.post_number);>
                                             <i class="fa fa-reply" aria-hidden="true"></i>&nbsp;&nbsp;Reply
@@ -62,12 +65,13 @@
                                                 *ngFor="let secondLevelReply of firstLevelReply.replies;"
                                                 style="line-height:25px">
                                                 <strong>{{secondLevelReply.name}}</strong>
+                                                <span
+                                                    class="filetype-info text-primary">{{secondLevelReply.createdDate | date:'MMMM dd, y'}}
+                                                    at {{secondLevelReply.createdDate | date:'hh:ss a'}}</span>
                                                 <!-- <P *ngIf="!parseBody(reply.body)">{{reply.body}}</P> -->
-                                                <div *ngIf="!parseBody(secondLevelReply.body)">{{secondLevelReply.body}}
-                                                </div>
-                                                <div [innerHTML]="secondLevelReply.body"
-                                                    *ngIf="parseBody(secondLevelReply.body)">
-                                                </div>
+                                                <!-- <div *ngIf="!parseBody(secondLevelReply.body)">{{secondLevelReply.body}}
+                                                </div> -->
+                                                <div [innerHTML]="secondLevelReply.body"></div>
                                                 <div class="text-primary cursor_pointer"
                                                     (click)=getPostNumber(secondLevelReply.post_number);>
                                                     <i class="fa fa-reply" aria-hidden="true"></i>&nbsp;&nbsp;Reply
@@ -77,12 +81,13 @@
                                                         *ngFor="let thirdLevelReply of secondLevelReply.replies;"
                                                         style="line-height:25px">
                                                         <strong>{{thirdLevelReply.name}}</strong>
+                                                        <span
+                                                            class="filetype-info text-primary">{{thirdLevelReply.createdDate | date:'MMMM dd, y'}}
+                                                            at {{thirdLevelReply.createdDate | date:'hh:ss a'}}</span>
                                                         <!-- <P *ngIf="!parseBody(reply.body)">{{reply.body}}</P> -->
-                                                        <div *ngIf="!parseBody(thirdLevelReply.body)">
-                                                            {{thirdLevelReply.body}}</div>
-                                                        <div [innerHTML]="thirdLevelReply.body"
-                                                            *ngIf="parseBody(thirdLevelReply.body)">
-                                                        </div>
+                                                        <!-- <div *ngIf="!parseBody(thirdLevelReply.body)">
+                                                            {{thirdLevelReply.body}}</div> -->
+                                                        <div [innerHTML]="thirdLevelReply.body"></div>
                                                         <div class="text-primary cursor_pointer"
                                                             (click)=getPostNumber(thirdLevelReply.post_number);>
                                                             <i class="fa fa-reply"
@@ -137,6 +142,7 @@
 <div class="editor mt-30" *ngIf="discussionThread.length > 0">
     <!-- #NUIH change: -->
     <quill-editor [(ngModel)]="editorContent" [options]="editorOptions"></quill-editor>
+    <span class="filetype-info">The comments length should be 15 to 1200 characters</span>
     <!-- <div [froalaEditor]="options" [(froalaModel)]="editorContent"></div><br> -->
     <!-- #NUIH change: -->
     <!-- <textarea class="wmd-input" [(ngModel)]="editorContent" id="wmd-input" placeholder="Type Here....Morethan 15 characters"></textarea> -->
@@ -148,8 +154,11 @@
     <div class="pull-left">
         <label class="ui green button" for="myFile"><i class="fa fa-cloud-upload"
                 aria-hidden="true"></i>&nbsp;&nbsp;Choose file</label>
-        <input type="file" style="display:none" id="myFile" name="myFile" accept=".pdf" (change)="fileEvent($event)"
-            title="Choose a file" autocomplete="off" />
+        <i title="{{selectedFile}}" *ngIf="selectedFile != null" class="fa fa-paperclip text-primary"
+            aria-hidden="true"></i>
+        <span class="filetype-info">Please upload pdf or image files only</span>
+        <input #fileInput type="file" style="display:none" id="myFile" name="myFile" accept=".pdf,.jpg,.jpeg"
+            (change)="fileEvent($event)" title="Choose a file" autocomplete="off" />
     </div>
     <div class="post_buttom">
         <button class="ui blue button" style="margin-right: 5px" [disabled]="isDisabled()" (click)="replyToThread()"
@@ -163,10 +172,11 @@
 <div class="ui large modal">
     <i class="close icon" (click)="postCancel()"></i>
     <div class="header">
+        <i class="fa fa-comments-o" aria-hidden="true"></i>
         {{resourceService?.frmelmnts?.lbl?.comments}}
     </div>
     <div class="content">
-        <div class="row">
+        <div class="row" style="max-height: 500px;overflow-y: scroll">
             <tree-view-menu [replyList]="nestedComments">Loading...</tree-view-menu>
         </div>
         <div class="row">
@@ -174,6 +184,7 @@
                 <div class="editor mt-30">
                     <!-- #NUIH change: -->
                     <quill-editor [(ngModel)]="editorContentForModal" [options]="editorOptions"></quill-editor>
+                    <span class="filetype-info">The comments length should be 15 to 1200 characters</span>
                     <!-- <div [froalaEditor]="options" [(froalaModel)]="editorContent"></div><br> -->
                     <!-- #NUIH change: -->
                     <!-- <textarea class="wmd-input" [(ngModel)]="editorContent" id="wmd-input" placeholder="Type Here....Morethan 15 characters"></textarea> -->
@@ -185,8 +196,12 @@
                     <div class="pull-left">
                         <label class="ui green button" for="myFile1"><i class="fa fa-cloud-upload"
                                 aria-hidden="true"></i>&nbsp;&nbsp;Choose file</label>
-                        <input type="file" style="display:none" id="myFile1" name="myFile1" accept=".pdf"
-                            (change)="fileEventforModal($event)" title="Choose a file" autocomplete="off" />
+                        <i title="{{selectedFile}}" *ngIf="selectedFile != null" class="fa fa-paperclip text-primary"
+                            aria-hidden="true"></i>
+                        <span class="filetype-info">Please upload pdf or image files only</span>
+                        <input #fileInputforModal type="file" style="display:none" id="myFile1" name="myFile1"
+                            accept=".pdf,.jpg,.jpeg" (change)="fileEventforModal($event)" title="Choose a file"
+                            autocomplete="off" />
                     </div>
                     <div class="post_buttom">
                         <button class="ui blue button" style="margin-right: 5px"

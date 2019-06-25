@@ -45,6 +45,8 @@
 
 .userDetails {
     margin-left: 18px;
+    max-height: 500px;
+    overflow-y: scroll;
     /* background: lightgrey;
         padding: 10px;
         border-radius: 4px;
@@ -59,6 +61,11 @@
     height: 50px;
     width: 50px;
     margin-bottom: 10px;
+}
+
+.fa-paperclip {
+    margin-left: 15px;
+    font-size: 20px;
 }
 
 .user-image {
@@ -122,4 +129,10 @@
 .content {
     max-height: 500px;
     overflow-y: scroll;
+}
+.filetype-info {
+    display: block;
+    font-size: 12px;
+    margin-top: 3px;
+    color: #616161;
 }
