@@ -65,7 +65,7 @@
 
 .fa-paperclip {
     margin-left: 15px;
-    font-size: 20px;
+    font-size: 18px;
 }
 
 .user-image {
@@ -136,3 +136,12 @@
     margin-top: 3px;
     color: #616161;
 }
+/* Mobile View Code Starts Here */
+@media (max-width:510px) {
+    .post_buttom {
+        margin-top:10px;
+        float: left;
+        cursor: pointer
+    }
+}
+/* Mobile View Code Ends Here */

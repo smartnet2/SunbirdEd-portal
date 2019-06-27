@@ -6,6 +6,12 @@
   flex-direction: column;
   justify-content: center;
 }
+.userDetails ul li, .ql-editor ul li, tree-view-menu ul li {
+  margin-bottom: 10px !important;
+}
+.userDetails ul, .ql-editor ul, tree-view-menu ul {
+  list-style: disc !important;
+}
 /* TODO: need to remove font family once we add fonts in index.html file */
 .placeholder-heading {
   align-self: center;

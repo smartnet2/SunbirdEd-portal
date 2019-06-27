@@ -1,5 +1,5 @@
 import { DomSanitizer } from '@angular/platform-browser';
-import { Component, OnInit, OnChanges, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnChanges, ViewChild, ElementRef, ViewEncapsulation } from '@angular/core';
 import { CourseDiscussService } from '../../services/course-discuss/course-discuss.service';
 import { DiscussionService } from '../../services/discussions/discussions.service';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
@@ -14,7 +14,7 @@ import { IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
 @Component({
   selector: 'app-discussion',
   templateUrl: './discussion.component.html',
-  styleUrls: ['./discussion.component.scss']
+  styleUrls: ['./discussion.component.scss'],
 })
 export class DiscussionComponent implements OnInit, OnChanges {
   // #NUIH change:
@@ -64,6 +64,9 @@ export class DiscussionComponent implements OnInit, OnChanges {
   };
   public telemetryInteractObject: IInteractEventObject;
   totalCommentsCount: number = 0;
+  showUploadLoader: boolean = false;
+  showReplyLoader: boolean = false;
+  showReplyLoaderforModal: boolean = false;
   constructor(
     discussionService: DiscussionService, public treeViewService: TreeViewService, private activatedRoute: ActivatedRoute,
     public courseDiscussionsService: CourseDiscussService, public resourceService: ResourceService,
@@ -130,6 +133,9 @@ export class DiscussionComponent implements OnInit, OnChanges {
     this.courseDiscussionsService.getReplies(id).subscribe((res: any) => {
       this.repliesContent = res.result.thread.replies;
       this.totalCommentsCount = res.result.thread.repliesCount;
+      this.showReplyLoader = false;
+      this.showReplyLoaderforModal = false;
+      this.postCancel();
       console.log('New Response');
       console.log('res', this.repliesContent);
     });
@@ -150,9 +156,6 @@ export class DiscussionComponent implements OnInit, OnChanges {
       }
     });
   }
-  collapse(i, id) {
-    this.getReplies(id);
-  }
   postCancel() {
     this.fileInput.nativeElement.value = "";
     this.fileInputforModal.nativeElement.value = "";
@@ -162,7 +165,6 @@ export class DiscussionComponent implements OnInit, OnChanges {
     this.replyPostNumber = null;
     this.selectedFile = null;
     this.postBtnText = 'Post';
-    this.fileInput
   }
   getPostNumber(postNumber) {
     this.postBtnText = 'Reply';
@@ -191,26 +193,39 @@ export class DiscussionComponent implements OnInit, OnChanges {
       'threadId': this.threadId,
       'replyPostNumber': this.replyPostNumber
     };
+    this.showReplyLoader = true;
+    this.showReplyLoaderforModal = true;
     this.courseDiscussionsService.replyToThread(body).subscribe((res) => {
-      (<any>$('.ui.large.modal')).modal('hide');
-      this.postCancel();
-      if (this.batchId) {
-        this.retreiveThread(this.batchId, 'batch');
-      } else {
-        this.retreiveThread(this.contentId, 'resource');
+      if (_.get(res, 'responseCode') === 'OK') {
+        this.editorContent = '';
+        this.uploadedFile = null;
+        this.editorContentForModal = '';
+        (<any>$('.ui.large.modal')).modal('hide');
+        // this.postCancel();
+        if (this.batchId) {
+          this.retreiveThread(this.batchId, 'batch');
+        } else {
+          this.retreiveThread(this.contentId, 'resource');
+        }
+        // this.getReplies(this.threadId);
       }
-      this.getReplies(this.threadId);
+      if (_.get(res, 'responseCode') === 'CLIENT_ERROR') {
+        this.toasterService.error(this.resourceService.messages.emsg.m0005);
+      }
+    }, (err) => {
+      console.log(err);
+      this.toasterService.error(this.resourceService.messages.emsg.m0005);
     });
   }
   isDisabled() {
-    if (!_.isEmpty(_.trim(this.editorContent)) && this.editorContent.length >= 22) {
+    if (!_.isEmpty(_.trim(this.editorContent)) && this.editorContent.length >= 22 && this.editorContent.length <= 1007) {
       return false;
     } else {
       return true;
     }
   }
   isDisabledforModal() {
-    if (!_.isEmpty(_.trim(this.editorContentForModal)) && this.editorContentForModal.length >= 22) {
+    if (!_.isEmpty(_.trim(this.editorContentForModal)) && this.editorContentForModal.length >= 22 && this.editorContent.length <= 1007) {
       return false;
     } else {
       return true;
@@ -246,14 +261,26 @@ export class DiscussionComponent implements OnInit, OnChanges {
 
   fileEvent(event) {
     const file = event.target.files[0];
-    this.courseDiscussionsService.uploadFile(file).subscribe((res: any) => {
-      if (res && res.result.response) {
-        const url = res.result.response.url;
-        const fileName = res.result.response.original_filename;
-        this.selectedFile = fileName;
-        this.uploadedFile = '<p><a class="attachment" href=' + url + '>' + fileName + '</a></p>';
-      }
-    });
+    this.showUploadLoader = true;
+    this.selectedFile = null;
+    if (_.round(file.size / 1024) <= 1024) {
+      this.courseDiscussionsService.uploadFile(file).subscribe((res: any) => {
+        if (res && res.result.response) {
+          const url = res.result.response.url;
+          // const fileName = res.result.response.original_filename;
+          this.selectedFile = file.name;
+          this.showUploadLoader = false;
+          this.uploadedFile = '<p><a class="attachment" href=' + url + '>' + this.selectedFile + '</a></p>';
+        }
+      }, (err) => {
+        console.log(err);
+        this.showUploadLoader = false;
+        this.toasterService.error(this.resourceService.messages.emsg.m0005);
+      });
+    } else {
+      this.showUploadLoader = false;
+      this.toasterService.error('The file size should be less than 1mb');
+    }
     // this.challengeService.batchUpload(file).subscribe((result: any) => {
     //   if (this.utils.validatorMessage(result, KRONOS.MESSAGES.FILE_UPLOAD_SUCCESSFULLY)) {
     //     this.getAllUsersByOrg();
@@ -262,14 +289,26 @@ export class DiscussionComponent implements OnInit, OnChanges {
   }
   fileEventforModal(event) {
     const file = event.target.files[0];
-    this.courseDiscussionsService.uploadFile(file).subscribe((res: any) => {
-      if (res && res.result.response) {
-        const url = res.result.response.url;
-        const fileName = res.result.response.original_filename;
-        this.selectedFile = fileName;
-        this.uploadedFile = '<p><a class="attachment" href=' + url + '>' + fileName + '</a></p>';
-      }
-    });
+    this.showUploadLoader = true;
+    this.selectedFile = null;
+    if (_.round(file.size / 1024) <= 1024) {
+      this.courseDiscussionsService.uploadFile(file).subscribe((res: any) => {
+        if (res && res.result.response) {
+          const url = res.result.response.url;
+          // const fileName = file;
+          this.selectedFile = file.name;
+          this.showUploadLoader = false;
+          this.uploadedFile = '<p><a class="attachment" href=' + url + '>' + this.selectedFile + '</a></p>';
+        }
+      }, (err) => {
+        console.log(err);
+        this.showUploadLoader = false;
+        this.toasterService.error(this.resourceService.messages.emsg.m0005);
+      });
+    } else {
+      this.showUploadLoader = false;
+      this.toasterService.error('The file size should be less than 1mb');
+    }
     // this.challengeService.batchUpload(file).subscribe((result: any) => {
     //   if (this.utils.validatorMessage(result, KRONOS.MESSAGES.FILE_UPLOAD_SUCCESSFULLY)) {
     //     this.getAllUsersByOrg();

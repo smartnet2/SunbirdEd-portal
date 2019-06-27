@@ -142,7 +142,7 @@
 <div class="editor mt-30" *ngIf="discussionThread.length > 0">
     <!-- #NUIH change: -->
     <quill-editor [(ngModel)]="editorContent" [options]="editorOptions"></quill-editor>
-    <span class="filetype-info">The comments length should be 15 to 1200 characters</span>
+    <span class="filetype-info">The comments length should be 15 to 1000 characters</span>
     <!-- <div [froalaEditor]="options" [(froalaModel)]="editorContent"></div><br> -->
     <!-- #NUIH change: -->
     <!-- <textarea class="wmd-input" [(ngModel)]="editorContent" id="wmd-input" placeholder="Type Here....Morethan 15 characters"></textarea> -->
@@ -152,17 +152,18 @@
     </div> -->
     <br />
     <div class="pull-left">
-        <label class="ui green button" for="myFile"><i class="fa fa-cloud-upload"
+        <label class="ui green button" [class.loading]="showUploadLoader" for="myFile"><i class="fa fa-cloud-upload"
                 aria-hidden="true"></i>&nbsp;&nbsp;Choose file</label>
         <i title="{{selectedFile}}" *ngIf="selectedFile != null" class="fa fa-paperclip text-primary"
-            aria-hidden="true"></i>
+            aria-hidden="true"></i><span class="text-primary" style="font-size: 13px">&nbsp;{{selectedFile}}</span>
         <span class="filetype-info">Please upload pdf or image files only</span>
         <input #fileInput type="file" style="display:none" id="myFile" name="myFile" accept=".pdf,.jpg,.jpeg"
             (change)="fileEvent($event)" title="Choose a file" autocomplete="off" />
     </div>
     <div class="post_buttom">
-        <button class="ui blue button" style="margin-right: 5px" [disabled]="isDisabled()" (click)="replyToThread()"
-            appTelemetryInteract [telemetryInteractEdata]="postCommentInteractEdata()"><i class="fa fa-commenting"
+        <button class="ui blue button" style="margin-right: 5px" [disabled]="isDisabled()"
+            [class.loading]="showReplyLoader" (click)="replyToThread()" appTelemetryInteract
+            [telemetryInteractEdata]="postCommentInteractEdata()"><i class="fa fa-commenting"
                 aria-hidden="true"></i>&nbsp;&nbsp;{{postBtnText}}</button>
         <button class="ui basic button" (click)="postCancel()"><i class="fa fa-times-circle"
                 aria-hidden="true"></i>&nbsp;&nbsp;{{resourceService?.frmelmnts?.btn?.cancel}}</button>
@@ -184,7 +185,7 @@
                 <div class="editor mt-30">
                     <!-- #NUIH change: -->
                     <quill-editor [(ngModel)]="editorContentForModal" [options]="editorOptions"></quill-editor>
-                    <span class="filetype-info">The comments length should be 15 to 1200 characters</span>
+                    <span class="filetype-info">The comments length should be 15 to 1000 characters</span>
                     <!-- <div [froalaEditor]="options" [(froalaModel)]="editorContent"></div><br> -->
                     <!-- #NUIH change: -->
                     <!-- <textarea class="wmd-input" [(ngModel)]="editorContent" id="wmd-input" placeholder="Type Here....Morethan 15 characters"></textarea> -->
@@ -194,10 +195,11 @@
                         </div> -->
                     <br />
                     <div class="pull-left">
-                        <label class="ui green button" for="myFile1"><i class="fa fa-cloud-upload"
-                                aria-hidden="true"></i>&nbsp;&nbsp;Choose file</label>
+                        <label class="ui green button" [class.loading]="showUploadLoader" for="myFile1"><i
+                                class="fa fa-cloud-upload" aria-hidden="true"></i>&nbsp;&nbsp;Choose file</label>
                         <i title="{{selectedFile}}" *ngIf="selectedFile != null" class="fa fa-paperclip text-primary"
-                            aria-hidden="true"></i>
+                            aria-hidden="true"></i><span class="text-primary"
+                            style="font-size: 13px">&nbsp;{{selectedFile}}</span>
                         <span class="filetype-info">Please upload pdf or image files only</span>
                         <input #fileInputforModal type="file" style="display:none" id="myFile1" name="myFile1"
                             accept=".pdf,.jpg,.jpeg" (change)="fileEventforModal($event)" title="Choose a file"
@@ -205,6 +207,7 @@
                     </div>
                     <div class="post_buttom">
                         <button class="ui blue button" style="margin-right: 5px"
+                            [class.loading]="showReplyLoaderforModal"
                             [ngClass]="{'disabled_cursor': isDisabledforModal()}" [disabled]="isDisabledforModal()"
                             (click)="replyToThreadFromModal()" appTelemetryInteract
                             [telemetryInteractEdata]="postCommentInteractEdata()"><i class="fa fa-commenting"
