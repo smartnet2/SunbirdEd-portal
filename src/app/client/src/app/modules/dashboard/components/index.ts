@@ -7,3 +7,4 @@ export * from './city-wise-report/city-wise-report.component';
 export * from './dept-city-wise-report/dept-city-wise-report.component';
 export * from './content-dept-wise-report/content-dept-wise-report.component';
 export * from './total-users/total-users.component';
+export * from './all-dashboard/all-dashboard.component';

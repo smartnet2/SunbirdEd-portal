@@ -33,11 +33,24 @@ export class ReportService {
     };
     return this.publicDataService.post(options);
   }
+  getOrgList() {
+    const options = {
+      url: this.configService.urlConFig.URLS.CHANNEL.LIST,
+    };
+    return this.learnerService.post(options);
+  }
   getDepartmentList(frameWork: string) {
     const options = {
       url: this.configService.urlConFig.URLS.FRAMEWORK.READ + '/' + frameWork,
     };
     return this.publicDataService.get(options);
+  }
+  getSubOrgList(data) {
+    const option = {
+      url: this.configService.urlConFig.URLS.ADMIN.ORG_SEARCH,
+      data: data
+    };
+    return this.publicDataService.post(option);
   }
   getUserList() {
     const options = {

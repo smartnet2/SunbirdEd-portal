@@ -5,6 +5,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 // Modules
 import { ChartsModule } from 'ng2-charts/ng2-charts';
+import { ChartModule } from 'primeng/chart';
 import { SuiModule } from 'ng2-semantic-ui';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { TelemetryModule } from '@sunbird/telemetry';
@@ -15,7 +16,7 @@ import {
   RendererService, LineChartService, DownloadService, CourseProgressService,
   UsageService
 } from './services';
-import { OrganisationComponent, CourseConsumptionComponent, CourseProgressComponent, UsageReportsComponent, ContentCreationStaticsComponent, CityWiseReportComponent, DeptCityWiseReportComponent, ContentDeptWiseReportComponent, TotalUserComponent } from './components';
+import { OrganisationComponent, CourseConsumptionComponent, CourseProgressComponent, UsageReportsComponent, ContentCreationStaticsComponent, CityWiseReportComponent, DeptCityWiseReportComponent, ContentDeptWiseReportComponent, TotalUserComponent, AllReportsComponent } from './components';
 // SB core and shared services
 import { SearchService } from '@sunbird/core';
 import { SharedModule } from '@sunbird/shared';
@@ -24,13 +25,14 @@ import { OrderModule } from 'ngx-order-pipe';
 import { CalendarModule } from 'primeng/calendar';
 import { TableModule } from 'primeng/table';
 import { DropdownModule } from 'primeng/dropdown';
-
+import { PermissionDirective } from './directives';
 @NgModule({
   imports: [
     CommonModule,
     DashboardRoutingModule,
     FormsModule,
     ChartsModule,
+    ChartModule,
     SuiModule,
     SharedModule,
     OrderModule,
@@ -40,8 +42,8 @@ import { DropdownModule } from 'primeng/dropdown';
     TableModule,
     DropdownModule
   ],
-  declarations: [CourseConsumptionComponent, OrganisationComponent, CourseProgressComponent, UsageReportsComponent, ContentCreationStaticsComponent, CityWiseReportComponent, DeptCityWiseReportComponent, ContentDeptWiseReportComponent, TotalUserComponent],
-  exports: [CourseProgressComponent],
+  declarations: [CourseConsumptionComponent, OrganisationComponent, CourseProgressComponent, UsageReportsComponent, ContentCreationStaticsComponent, CityWiseReportComponent, DeptCityWiseReportComponent, ContentDeptWiseReportComponent, TotalUserComponent, AllReportsComponent, PermissionDirective],
+  exports: [CourseProgressComponent, PermissionDirective],
   providers: [
     RendererService,
     DashboardUtilsService,

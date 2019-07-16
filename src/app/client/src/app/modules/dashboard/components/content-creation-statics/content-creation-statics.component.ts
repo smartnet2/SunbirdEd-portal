@@ -12,6 +12,7 @@ import { ReportService } from '../../services/reports/reports.service';
 import { DatePipe } from '@angular/common';
 import { OnDelete } from 'fine-uploader/lib/core';
 import { Subject } from 'rxjs';
+import * as moment from 'moment';
 @Component({
   selector: 'app-content-creation-statics',
   templateUrl: './content-creation-statics.component.html',
@@ -23,10 +24,12 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
   noResult: boolean = false;
   value: Date;
   currentDate: Date = new Date();
+  moment: any;
   fromDate: Date;
   toDate: Date;
   tableData: any = [];
   allOrgName: any = [];
+  orgList: any = [];
   allUserName: any = [];
   cols: any[];
   noResultMessage: INoResultMessage;
@@ -39,10 +42,21 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
     this.activatedRoute = activatedRoute;
   }
   ngOnInit() {
-    this.getOrgDetails();
-    this.getUserDetails();
+    this.initializeDateFields();
+    this.getOrgList();
+    // this.getOrgDetails();
+    // this.getUserDetails();
+  }
+  initializeDateFields() {
+    this.moment = moment();
+    this.fromDate = new Date(this.moment.subtract(7, "days"));
+    this.toDate = new Date();
   }
   getContentCreationStaticsReport() {
+    let channelFilter = [];
+    _.map(this.orgList, function (obj) {
+      channelFilter.push(obj.identifier)
+    });
     const data = {
       "request": {
         "query": "",
@@ -50,43 +64,52 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
           "status": [
             "Live"
           ],
-          "createdOn": { ">=": this.datePipe.transform(this.fromDate, 'yyyy-MM-ddTHH:MM'), "<=": this.datePipe.transform(this.toDate, 'yyyy-MM-ddTHH:MM') }
+          "framework": ["nulp"],
+          "channel": channelFilter,
+          "contentType": ["Course", 'Resource', 'Collection'],
+          "lastUpdatedOn": { ">=": this.datePipe.transform(this.fromDate, 'yyyy-MM-ddTHH:MM'), "<=": this.datePipe.transform(this.toDate, 'yyyy-MM-ddTHH:MM') }
         },
         "limit": "1000",
         "sort_by": {
           "lastUpdatedOn": "desc"
         },
-        "fields": ["identifier", "name", "contentType", "createdFor", "channel", "board", "medium", "gradeLevel", "subject", "lastUpdatedOn", "status", "createdBy", "framework", "createdOn"]
+        "fields": ["identifier", "creator", "organisation", "name", "contentType", "createdFor", "channel", "board", "medium", "gradeLevel", "subject", "lastUpdatedOn", "status", "createdBy", "framework", "createdOn"]
       }
     };
     this.reportService.getContentCreationStaticsReport(data).subscribe((response) => {
       if (_.get(response, 'responseCode') === 'OK') {
-        if (response.result.content.length > 0) {
+        if (response.result.count > 0) {
           this.tableData = [];
           let tempObj = _.cloneDeep(response.result.content);
           var self = this;
           _.map(tempObj, function (obj) {
             obj.createdOn = self.datePipe.transform(obj.createdOn, 'MM/dd/yyyy');
-            if (!_.isEmpty(obj.channel)) {
-              obj.OrgName = _.get(_.find(self.allOrgName, { 'id': obj.channel }), 'orgName');
-            } else {
-              obj.OrgName = '';
-            }
-            if (!_.isEmpty(obj.createdBy)) {
-              obj.UserName = _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'firstName') + " " + _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'lastName');
-            } else {
-              obj.UserName = '';
-            }
+            obj.OrgName = _.toArray(obj.organisation)[0];
+            obj.UserName = obj.creator;
+            // if (!_.isEmpty(obj.channel)) {
+            //   obj.OrgName = _.get(_.find(self.allOrgName, { 'id': obj.channel }), 'orgName');
+            // } else {
+            //   obj.OrgName = '';
+            // }
+            // if (!_.isEmpty(obj.createdBy)) {
+            //   obj.UserName = _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'firstName') + " " + _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'lastName');
+            // } else {
+            //   obj.UserName = '';
+            // }
           });
           this.noResult = false;
           this.tableData = tempObj;
+          // this.tableData = _.reject(tempObj, function (obj) {
+          //   if (_.isEmpty(obj.OrgName)) {
+          //     return obj;
+          //   }
+          // });
           this.initializeColumns();
-          if (_.isEmpty(this.tableData)) {
-            this.noResultMessage = {
-              'messageText': 'messages.stmsg.m0131'
-            };
-            this.noResult = true;
-          }
+        } else {
+          this.noResultMessage = {
+            'messageText': 'messages.stmsg.m0131'
+          };
+          this.noResult = true;
         }
       } else {
         this.toasterService.error(this.resourceService.messages.emsg.m0007);
@@ -116,6 +139,25 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
       this.toasterService.error(this.resourceService.messages.emsg.m0007);
     });
   }
+  getOrgList() {
+    this.orgList = [];
+    this.reportService.getOrgList().subscribe((response) => {
+      if (_.get(response, 'responseCode') === 'OK') {
+        if (response.result.count > 0) {
+          this.orgList = _.reject(response.result.channels, function (obj) {
+            if (obj.name === 'nuis_test' || obj.name === 'niua_test' || obj.name === 'nuis' || obj.name === 'pwc') {
+              return obj;
+            }
+          });
+        }
+      } else {
+        this.toasterService.error(this.resourceService.messages.emsg.m0007);
+      }
+    }, (err) => {
+      console.log(err);
+      this.toasterService.error(this.resourceService.messages.emsg.m0007);
+    });
+  }
   getUserDetails() {
     this.allUserName = [];
     this.reportService.getUserList().subscribe((response) => {
@@ -133,24 +175,23 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
   }
   initializeColumns() {
     this.cols = [
-      { field: 'OrgName', header: 'Organization Name' },
-      { field: 'identifier', header: 'Identifier' },
-      { field: 'subject', header: 'Subject' },
-      { field: 'medium', header: 'Medium' },
+      { field: 'OrgName', header: 'City Name' },
+      { field: 'name', header: 'Name' },
+      { field: 'board', header: 'Category' },
+      { field: 'gradeLevel', header: 'Sub Category' },
+      // { field: 'identifier', header: 'Identifier' },
+      { field: 'subject', header: 'Topic' },
+      { field: 'medium', header: 'Language' },
       { field: 'createdOn', header: 'Created On' },
-      { field: 'objectType', header: 'Object Type' },
-      { field: 'gradeLevel', header: 'Grade Level' },
+      // { field: 'objectType', header: 'Object Type' },
       { field: 'framework', header: 'Framework' },
       { field: 'UserName', header: 'Created By' },
-      { field: 'name', header: 'Name' },
       { field: 'contentType', header: 'Content Type' },
-      { field: 'board', header: 'Board' },
-      { field: 'status', header: 'Status' }
+      // { field: 'status', header: 'Status' }
     ]
   }
   resetFields() {
-    this.fromDate = null;
-    this.toDate = null;
+    this.initializeDateFields();
   }
   ngOnDestroy() {
     this.unsubscribe.next();

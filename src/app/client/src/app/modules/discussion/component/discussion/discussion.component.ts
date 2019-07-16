@@ -18,8 +18,8 @@ import { IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
 })
 export class DiscussionComponent implements OnInit, OnChanges {
   // #NUIH change:
-  @ViewChild('fileInput') fileInput: ElementRef;
-  @ViewChild('fileInputforModal') fileInputforModal: ElementRef;
+  // @ViewChild('fileInput') fileInput: ElementRef;
+  // @ViewChild('fileInputforModal') fileInputforModal: ElementRef;
   selectedFile: string = null;
   public nestedComments: any = [];
   public postBtnText = 'Post';
@@ -157,8 +157,8 @@ export class DiscussionComponent implements OnInit, OnChanges {
     });
   }
   postCancel() {
-    this.fileInput.nativeElement.value = "";
-    this.fileInputforModal.nativeElement.value = "";
+    // this.fileInput.nativeElement.value = "";
+    // this.fileInputforModal.nativeElement.value = "";
     this.editorContent = '';
     this.uploadedFile = null;
     this.editorContentForModal = '';

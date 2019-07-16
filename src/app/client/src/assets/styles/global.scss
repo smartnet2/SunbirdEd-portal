@@ -156,3 +156,6 @@ input#keyword {
     margin-top:120px!important;
 }
 }
+.ui-dropdown.ui-state-disabled .ui-dropdown-label {
+  cursor: not-allowed !important;
+}

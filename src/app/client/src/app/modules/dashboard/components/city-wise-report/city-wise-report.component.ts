@@ -12,6 +12,7 @@ import { ReportService } from '../../services/reports/reports.service';
 import { DatePipe } from '@angular/common';
 import { OnDelete } from 'fine-uploader/lib/core';
 import { Subject } from 'rxjs';
+import * as moment from 'moment';
 @Component({
   selector: 'app-city-wise-report',
   templateUrl: './city-wise-report.component.html',
@@ -19,9 +20,11 @@ import { Subject } from 'rxjs';
   encapsulation: ViewEncapsulation.None
 })
 export class CityWiseReportComponent implements OnInit, OnDestroy {
+  pieChartData: any;
   public unsubscribe = new Subject<void>();
   noResult: boolean = false;
   value: Date;
+  moment: any;
   currentDate: Date = new Date();
   fromDate: Date;
   toDate: Date;
@@ -41,10 +44,21 @@ export class CityWiseReportComponent implements OnInit, OnDestroy {
     this.activatedRoute = activatedRoute;
   }
   ngOnInit() {
-    this.getOrgDetails();
-    this.getUserDetails();
+    this.initializeDateFields();
+    this.getOrgList();
+    // this.getOrgDetails();
+    // this.getUserDetails();
+  }
+  initializeDateFields() {
+    this.moment = moment();
+    this.fromDate = new Date(this.moment.subtract(7, "days"));
+    this.toDate = new Date();
   }
   getContentCreationStaticsReport() {
+    let channelfilter = [];
+    // _.map(_.filter(_.cloneDeep(this.allOrgName), { rootOrgId: _.get(this.selectedCity, 'rootOrgId') }), function (obj) {
+    //   channelfilter.push(obj.rootOrgId);
+    // });
     const data = {
       "request": {
         "query": "",
@@ -52,45 +66,103 @@ export class CityWiseReportComponent implements OnInit, OnDestroy {
           "status": [
             "Live"
           ],
-          "createdOn": { ">=": this.datePipe.transform(this.fromDate, 'yyyy-MM-ddTHH:MM'), "<=": this.datePipe.transform(this.toDate, 'yyyy-MM-ddTHH:MM') }
+          "framework": ["nulp"],
+          "channel": [_.get(this.selectedCity, 'identifier')],
+          // "channel": channelfilter,
+          "contentType": ["Course", 'Resource', 'Collection'],
+          "lastUpdatedOn": { ">=": this.datePipe.transform(this.fromDate, 'yyyy-MM-ddTHH:MM'), "<=": this.datePipe.transform(this.toDate, 'yyyy-MM-ddTHH:MM') }
         },
         "limit": "1000",
         "sort_by": {
           "lastUpdatedOn": "desc"
         },
-        "fields": ["identifier", "name", "contentType", "createdFor", "channel", "board", "medium", "gradeLevel", "subject", "lastUpdatedOn", "status", "createdBy", "framework", "createdOn"]
+        "fields": ["identifier", "creator", "organisation", "name", "contentType", "createdFor", "channel", "board", "medium", "gradeLevel", "subject", "lastUpdatedOn", "status", "createdBy", "framework", "createdOn"]
       }
     };
-    this.reportService.getContentCreationStaticsReport(data).subscribe((response) => {
+    if (!_.isEmpty(this.selectedCity)) {
+      this.reportService.getContentCreationStaticsReport(data).subscribe((response) => {
+        if (_.get(response, 'responseCode') === 'OK') {
+          if (response.result.count > 0) {
+            this.tableData = [];
+            let tempObj = _.cloneDeep(response.result.content);
+            var self = this;
+            _.map(tempObj, function (obj) {
+              obj.createdOn = self.datePipe.transform(obj.createdOn, 'MM/dd/yyyy');
+              obj.OrgName = _.toArray(obj.organisation)[0];
+              obj.departmentName = (_.toArray(obj.organisation).length === 1) ? _.toArray(obj.organisation)[0] : _.toArray(obj.organisation)[1];
+              // if (!_.isEmpty(obj.channel)) {
+              //   obj.departmentName = _.lowerCase(_.get(_.find(self.allOrgName, { 'id': obj.channel }), 'orgName'));
+              // } else {
+              //   obj.departmentName = '';
+              // }
+              obj.UserName = obj.creator;
+              // if (!_.isEmpty(obj.createdBy)) {
+              //   obj.UserName = _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'firstName') + " " + _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'lastName');
+              // } else {
+              //   obj.UserName = '';
+              // }
+            });
+            this.noResult = false;
+            this.tableData = tempObj;
+            // this.tableData = _.get(this.selectedCity, 'orgName') != 'All' ? _.filter(tempObj, { OrgName: _.get(this.selectedCity, 'orgName') }) : tempObj;
+            this.initializeColumns();
+            this.initializePieChart();
+            // if (_.isEmpty(this.tableData)) {
+            //   this.noResultMessage = {
+            //     'messageText': 'messages.stmsg.m0131'
+            //   };
+            //   this.noResult = true;
+            // }
+          } else {
+            this.noResultMessage = {
+              'messageText': 'messages.stmsg.m0131'
+            };
+            this.noResult = true;
+          }
+        } else {
+          this.toasterService.error(this.resourceService.messages.emsg.m0007);
+        }
+      }, (err) => {
+        console.log(err);
+        this.toasterService.error(this.resourceService.messages.emsg.m0007);
+      });
+    } else {
+      this.toasterService.error("Please select the city");
+    }
+  }
+  initializePieChart() {
+    let pieChartLabels = [];
+    let pieChartData = [];
+    let pieChartColors = [];
+    let staticColors = ["#42a5f5", "#26a69a", "#8bc34a", "#43a047", "#0097a7"];
+    let self = this;
+    _.map(_.uniqBy(_.cloneDeep(this.tableData), 'departmentName'), function (obj) {
+      pieChartLabels.push(_.get(obj, 'departmentName'));
+      pieChartData.push(_.filter(_.cloneDeep(self.tableData), { departmentName: _.get(obj, 'departmentName') }).length);
+    });
+    _.map(pieChartLabels, function (obj, index) {
+      pieChartColors.push(staticColors[index % 5]);
+    });
+    this.pieChartData = {
+      labels: pieChartLabels,
+      datasets: [
+        {
+          data: pieChartData,
+          backgroundColor: pieChartColors,
+          hoverBackgroundColor: pieChartColors
+        }]
+    };
+  }
+  getOrgList() {
+    this.cityList = [];
+    this.reportService.getOrgList().subscribe((response) => {
       if (_.get(response, 'responseCode') === 'OK') {
-        if (response.result.content.length > 0) {
-          this.tableData = [];
-          let tempObj = _.cloneDeep(response.result.content);
-          var self = this;
-          _.map(tempObj, function (obj) {
-            obj.createdOn = self.datePipe.transform(obj.createdOn, 'MM/dd/yyyy');
-            if (!_.isEmpty(obj.channel)) {
-              obj.OrgName = _.lowerCase(_.get(_.find(self.allOrgName, { 'id': obj.channel }), 'orgName'));
-            } else {
-              obj.OrgName = '';
-            }
-            if (!_.isEmpty(obj.createdBy)) {
-              obj.UserName = _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'firstName') + " " + _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'lastName');
-            } else {
-              obj.UserName = '';
+        if (response.result.count > 0) {
+          this.cityList = _.reject(response.result.channels, function (obj) {
+            if (obj.name === 'nuis_test' || obj.name === 'niua_test' || obj.name === 'nuis' || obj.name === 'pwc') {
+              return obj;
             }
           });
-          if (!_.isEmpty(this.selectedCity)) {
-            this.noResult = false;
-            this.tableData = _.filter(tempObj, { OrgName: _.get(this.selectedCity, 'orgName') });
-            this.initializeColumns();
-            if (_.isEmpty(this.tableData)) {
-              this.noResultMessage = {
-                'messageText': 'messages.stmsg.m0131'
-              };
-              this.noResult = true;
-            }
-          }
         }
       } else {
         this.toasterService.error(this.resourceService.messages.emsg.m0007);
@@ -112,12 +184,13 @@ export class CityWiseReportComponent implements OnInit, OnDestroy {
         if (response.result.response.content.length > 0) {
           this.allOrgName = response.result.response.content;
           this.cityList = _.map(_.compact(_.reject(_.cloneDeep(response.result.response.content), function (obj) {
-            if (_.lowerCase(obj.orgName) == 'nuis' || _.lowerCase(obj.orgName) == 'test nuis' || _.lowerCase(obj.orgName) == 'test niua' || obj.isRootOrg === false || _.isEmpty(obj.orgName))
+            if (_.lowerCase(obj.orgName) == 'nuis' || _.lowerCase(obj.orgName) == 'test nuis' || _.lowerCase(obj.orgName) == 'pwc' || _.lowerCase(obj.orgName) == 'test niua' || obj.isRootOrg === false || _.isEmpty(obj.orgName))
               return obj;
           })), function (obj) {
             obj['orgName'] = _.lowerCase(obj['orgName']);
             return obj;
           });
+          // this.cityList.splice(0, 0, { orgName: "All" });
         }
       } else {
         this.toasterService.error(this.resourceService.messages.emsg.m0007);
@@ -144,24 +217,24 @@ export class CityWiseReportComponent implements OnInit, OnDestroy {
   }
   initializeColumns() {
     this.cols = [
-      // { field: 'OrgName', header: 'Organization Name' },
-      { field: 'identifier', header: 'Identifier' },
-      { field: 'subject', header: 'Subject' },
-      { field: 'medium', header: 'Medium' },
+      { field: 'OrgName', header: 'City Name' },
+      { field: 'departmentName', header: 'Creator Department' },
+      { field: 'name', header: 'Name' },
+      { field: 'board', header: 'Category' },
+      { field: 'gradeLevel', header: 'Sub Category' },
+      // { field: 'identifier', header: 'Identifier' },
+      { field: 'subject', header: 'Topic' },
+      { field: 'medium', header: 'Language' },
       { field: 'createdOn', header: 'Created On' },
-      { field: 'objectType', header: 'Object Type' },
-      { field: 'gradeLevel', header: 'Grade Level' },
+      // { field: 'objectType', header: 'Object Type' },
       { field: 'framework', header: 'Framework' },
       { field: 'UserName', header: 'Created By' },
-      { field: 'name', header: 'Name' },
       { field: 'contentType', header: 'Content Type' },
-      { field: 'board', header: 'Board' },
-      { field: 'status', header: 'Status' }
+      // { field: 'status', header: 'Status' }
     ]
   }
   resetFields() {
-    this.fromDate = null;
-    this.toDate = null;
+    this.initializeDateFields();
     this.selectedCity = null;
   }
   ngOnDestroy() {

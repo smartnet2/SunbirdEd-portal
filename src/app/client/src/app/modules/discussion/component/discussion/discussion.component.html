@@ -151,7 +151,7 @@
         <button class="ui item" (click)="postComment()">Post</button>
     </div> -->
     <br />
-    <div class="pull-left">
+    <!-- <div class="pull-left">
         <label class="ui green button" [class.loading]="showUploadLoader" for="myFile"><i class="fa fa-cloud-upload"
                 aria-hidden="true"></i>&nbsp;&nbsp;Choose file</label>
         <i title="{{selectedFile}}" *ngIf="selectedFile != null" class="fa fa-paperclip text-primary"
@@ -159,7 +159,7 @@
         <span class="filetype-info">Please upload pdf or image files only</span>
         <input #fileInput type="file" style="display:none" id="myFile" name="myFile" accept=".pdf,.jpg,.jpeg"
             (change)="fileEvent($event)" title="Choose a file" autocomplete="off" />
-    </div>
+    </div> -->
     <div class="post_buttom">
         <button class="ui blue button" style="margin-right: 5px" [disabled]="isDisabled()"
             [class.loading]="showReplyLoader" (click)="replyToThread()" appTelemetryInteract
@@ -194,7 +194,7 @@
                             <button class="ui item" (click)="postComment()">Post</button>
                         </div> -->
                     <br />
-                    <div class="pull-left">
+                    <!-- <div class="pull-left">
                         <label class="ui green button" [class.loading]="showUploadLoader" for="myFile1"><i
                                 class="fa fa-cloud-upload" aria-hidden="true"></i>&nbsp;&nbsp;Choose file</label>
                         <i title="{{selectedFile}}" *ngIf="selectedFile != null" class="fa fa-paperclip text-primary"
@@ -204,7 +204,7 @@
                         <input #fileInputforModal type="file" style="display:none" id="myFile1" name="myFile1"
                             accept=".pdf,.jpg,.jpeg" (change)="fileEventforModal($event)" title="Choose a file"
                             autocomplete="off" />
-                    </div>
+                    </div> -->
                     <div class="post_buttom">
                         <button class="ui blue button" style="margin-right: 5px"
                             [class.loading]="showReplyLoaderforModal"

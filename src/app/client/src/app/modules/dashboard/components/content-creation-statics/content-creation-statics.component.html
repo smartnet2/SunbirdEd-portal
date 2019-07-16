@@ -1,5 +1,5 @@
 <div class="ui container" [appTelemetryImpression]="telemetryImpression">
-    <form novalidate>
+    <form novalidate [ngClass]="{'grey-border': tableData.length > 0 || noResult}">
         <div class="ui grid stackable top aligned my-0">
             <div class="twelve wide tablet ten wide computer column mobile-p-0">
                 <div class="ui grid">
@@ -8,8 +8,7 @@
                             <label>From Date</label>
                             <div class="mt-10" style="cursor: pointer">
                                 <p-calendar [(ngModel)]="fromDate" [showIcon]=true placeholder="Choose From Date"
-                                    [maxDate]="currentDate" [ngModelOptions]="{standalone: true}"
-                                    [readonlyInput]="true">
+                                    [maxDate]="toDate" [ngModelOptions]="{standalone: true}" [readonlyInput]="true">
                                 </p-calendar>
                             </div>
                         </div>
@@ -19,7 +18,7 @@
                             <label>To Date</label>
                             <div class="mt-10" style="cursor: pointer">
                                 <p-calendar [(ngModel)]="toDate" [showIcon]=true placeholder="Choose To Date"
-                                    [maxDate]="currentDate" [ngModelOptions]="{standalone: true}"
+                                    [minDate]="fromDate" [maxDate]="currentDate" [ngModelOptions]="{standalone: true}"
                                     [readonlyInput]="true">
                                 </p-calendar>
                             </div>
@@ -38,6 +37,9 @@
         </div>
     </form><br><br>
     <div class="ui grid" *ngIf="!noResult && tableData.length > 0">
+        <div class="twelve wide column">
+            <span>Number of resource created:&nbsp;<b>{{tableData.length}}</b></span>
+        </div>
         <div class="twelve wide column">
             <p-table #dt [value]="tableData" [columns]="cols" [paginator]="true" [rows]="10" [resizableColumns]="true">
                 <ng-template pTemplate="caption">

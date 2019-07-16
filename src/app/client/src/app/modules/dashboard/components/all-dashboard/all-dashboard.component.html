@@ -1,0 +1,33 @@
+<div class="ui container" [appTelemetryImpression]="telemetryImpression">
+    <div class="ui stackable grid mt-30">
+        <div class="twelve wide column workspacesegment">
+            <sui-tabset>
+                <div class="ui top attached tabular menu">
+                    <a class="item" suiTabHeader="contentcreation" appPermission [permission]='adminDashboard'>Content
+                        Creation</a>
+                    <a class="item" suiTabHeader="citywisecontentcreation" appPermission
+                        [permission]='adminDashboard'>City Wise Content Creation</a>
+                    <a class="item" suiTabHeader="departmentwisecontentcreation" appPermission
+                        [permission]='adminDashboard'>Department Wise Content Creation</a>
+                    <a class="item" suiTabHeader="contenttypewisecontentcreation" appPermission
+                        [permission]='adminDashboard'>Content Type Wise Content Creation</a>
+                </div>
+                <div class="ui bottom attached segment" suiTabContent="contentcreation">
+                    <app-content-creation-statics></app-content-creation-statics>
+                </div>
+                <div class="ui bottom attached segment" suiTabContent="citywisecontentcreation">
+                    <app-city-wise-report></app-city-wise-report>
+                </div>
+                <div class="ui bottom attached segment" suiTabContent="departmentwisecontentcreation">
+                    <app-dept-city-wise-report></app-dept-city-wise-report>
+                </div>
+                <div class="ui bottom attached segment" suiTabContent="contenttypewisecontentcreation">
+                    <app-content-dept-wise-report></app-content-dept-wise-report>
+                </div>
+            </sui-tabset>
+        </div>
+    </div>
+    <!-- <div *ngIf="noResult">
+        <app-no-result [data]="noResultMessage"></app-no-result>
+    </div> -->
+</div>
