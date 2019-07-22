@@ -46,7 +46,7 @@ export class CityWiseReportComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.initializeDateFields();
     this.getOrgList();
-    // this.getOrgDetails();
+    this.getOrgDetails();
     // this.getUserDetails();
   }
   initializeDateFields() {
@@ -76,7 +76,7 @@ export class CityWiseReportComponent implements OnInit, OnDestroy {
         "sort_by": {
           "lastUpdatedOn": "desc"
         },
-        "fields": ["identifier", "creator", "organisation", "name", "contentType", "createdFor", "channel", "board", "medium", "gradeLevel", "subject", "lastUpdatedOn", "status", "createdBy", "framework", "createdOn"]
+        "fields": ["identifier", "creator", "organisation", "name", "contentType", "createdFor", "channel", "board", "medium", "gradeLevel", "subject", "lastUpdatedOn", "status", "createdBy", "framework", "createdOn", "lastPublishedOn"]
       }
     };
     if (!_.isEmpty(this.selectedCity)) {
@@ -87,9 +87,20 @@ export class CityWiseReportComponent implements OnInit, OnDestroy {
             let tempObj = _.cloneDeep(response.result.content);
             var self = this;
             _.map(tempObj, function (obj) {
-              obj.createdOn = self.datePipe.transform(obj.createdOn, 'MM/dd/yyyy');
-              obj.OrgName = _.toArray(obj.organisation)[0];
-              obj.departmentName = (_.toArray(obj.organisation).length === 1) ? _.toArray(obj.organisation)[0] : _.toArray(obj.organisation)[1];
+              obj.createdOn = self.datePipe.transform(obj.lastPublishedOn, 'MM/dd/yyyy');
+              obj.OrgName = _.get(self.selectedCity, 'name');
+              if (_.toArray(obj.createdFor).length === 1) {
+                // obj.departmentName = _.toArray(obj.organisation)[0];
+                obj.departmentName = _.get(_.find(self.allOrgName, { 'id': _.toArray(obj.createdFor)[0] }), 'orgName');
+              } else if (_.toArray(obj.createdFor).length > 1) {
+                if (_.get(self.selectedCity, 'identifier') === _.toArray(obj.createdFor)[0]) {
+                  // obj.departmentName = _.toArray(obj.organisation)[1];
+                  obj.departmentName = _.get(_.find(self.allOrgName, { 'id': _.toArray(obj.createdFor)[1] }), 'orgName');
+                } else {
+                  // obj.departmentName = _.toArray(obj.organisation)[0];
+                  obj.departmentName = _.get(_.find(self.allOrgName, { 'id': _.toArray(obj.createdFor)[0] }), 'orgName');
+                }
+              }
               // if (!_.isEmpty(obj.channel)) {
               //   obj.departmentName = _.lowerCase(_.get(_.find(self.allOrgName, { 'id': obj.channel }), 'orgName'));
               // } else {
@@ -183,13 +194,13 @@ export class CityWiseReportComponent implements OnInit, OnDestroy {
       if (_.get(response, 'responseCode') === 'OK') {
         if (response.result.response.content.length > 0) {
           this.allOrgName = response.result.response.content;
-          this.cityList = _.map(_.compact(_.reject(_.cloneDeep(response.result.response.content), function (obj) {
-            if (_.lowerCase(obj.orgName) == 'nuis' || _.lowerCase(obj.orgName) == 'test nuis' || _.lowerCase(obj.orgName) == 'pwc' || _.lowerCase(obj.orgName) == 'test niua' || obj.isRootOrg === false || _.isEmpty(obj.orgName))
-              return obj;
-          })), function (obj) {
-            obj['orgName'] = _.lowerCase(obj['orgName']);
-            return obj;
-          });
+          // this.cityList = _.map(_.compact(_.reject(_.cloneDeep(response.result.response.content), function (obj) {
+          //   if (_.lowerCase(obj.orgName) == 'nuis' || _.lowerCase(obj.orgName) == 'test nuis' || _.lowerCase(obj.orgName) == 'pwc' || _.lowerCase(obj.orgName) == 'test niua' || obj.isRootOrg === false || _.isEmpty(obj.orgName))
+          //     return obj;
+          // })), function (obj) {
+          //   obj['orgName'] = _.lowerCase(obj['orgName']);
+          //   return obj;
+          // });
           // this.cityList.splice(0, 0, { orgName: "All" });
         }
       } else {
@@ -225,7 +236,7 @@ export class CityWiseReportComponent implements OnInit, OnDestroy {
       // { field: 'identifier', header: 'Identifier' },
       { field: 'subject', header: 'Topic' },
       { field: 'medium', header: 'Language' },
-      { field: 'createdOn', header: 'Created On' },
+      { field: 'createdOn', header: 'Last Published On' },
       // { field: 'objectType', header: 'Object Type' },
       { field: 'framework', header: 'Framework' },
       { field: 'UserName', header: 'Created By' },

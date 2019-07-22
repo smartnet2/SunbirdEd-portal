@@ -1,12 +1,20 @@
 import { Injectable } from '@angular/core';
 import { PublicDataService } from '../../../core/services/public-data/public-data.service';
 import { ConfigService } from '@sunbird/shared';
-import { LearnerService } from '@sunbird/core';
+import { LearnerService, UserService } from '@sunbird/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReportService {
+  /**
+ * user id
+ */
+  userid: string;
+  /**
+ * To get details about user profile.
+ */
+  private userService: UserService;
   /**
  * reference of lerner service.
  */
@@ -14,9 +22,13 @@ export class ReportService {
   /**
   * constructor
   * @param {LearnerService} learner LearnerService reference
+  * @param {UserService} userService Reference of UserService.
   */
-  constructor(private publicDataService: PublicDataService, learner: LearnerService, public configService: ConfigService) {
+  constructor(userService: UserService, private publicDataService: PublicDataService, learner: LearnerService, public configService: ConfigService) {
     this.learnerService = learner;
+    this.userService = userService;
+    this.userid = this.userService.userid;
+
   }
 
   getContentCreationStaticsReport(data) {
@@ -51,6 +63,13 @@ export class ReportService {
       data: data
     };
     return this.publicDataService.post(option);
+  }
+  getEnrolledCourses() {
+    const option = {
+      url: this.configService.urlConFig.URLS.COURSE.GET_ENROLLED_COURSES + '/' + this.userid,
+      param: { ...this.configService.appConfig.Course.contentApiQueryParams, ...this.configService.urlConFig.params.enrolledCourses }
+    };
+    return this.learnerService.get(option);
   }
   getUserList() {
     const options = {

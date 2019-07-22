@@ -44,7 +44,7 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.initializeDateFields();
     this.getOrgList();
-    // this.getOrgDetails();
+    this.getOrgDetails();
     // this.getUserDetails();
   }
   initializeDateFields() {
@@ -73,7 +73,7 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
         "sort_by": {
           "lastUpdatedOn": "desc"
         },
-        "fields": ["identifier", "creator", "organisation", "name", "contentType", "createdFor", "channel", "board", "medium", "gradeLevel", "subject", "lastUpdatedOn", "status", "createdBy", "framework", "createdOn"]
+        "fields": ["identifier", "creator", "organisation", "name", "contentType", "createdFor", "channel", "board", "medium", "gradeLevel", "subject", "lastUpdatedOn", "status", "createdBy", "framework", "createdOn", "lastPublishedOn"]
       }
     };
     this.reportService.getContentCreationStaticsReport(data).subscribe((response) => {
@@ -83,14 +83,14 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
           let tempObj = _.cloneDeep(response.result.content);
           var self = this;
           _.map(tempObj, function (obj) {
-            obj.createdOn = self.datePipe.transform(obj.createdOn, 'MM/dd/yyyy');
-            obj.OrgName = _.toArray(obj.organisation)[0];
+            obj.createdOn = self.datePipe.transform(obj.lastPublishedOn, 'MM/dd/yyyy');
+            // obj.OrgName = _.toArray(obj.organisation)[_.indexOf(_.toArray(obj.createdFor), _.get(obj, 'channel'))];
             obj.UserName = obj.creator;
-            // if (!_.isEmpty(obj.channel)) {
-            //   obj.OrgName = _.get(_.find(self.allOrgName, { 'id': obj.channel }), 'orgName');
-            // } else {
-            //   obj.OrgName = '';
-            // }
+            if (!_.isEmpty(obj.channel)) {
+              obj.OrgName = _.get(_.find(self.allOrgName, { 'id': obj.channel }), 'orgName');
+            } else {
+              obj.OrgName = '';
+            }
             // if (!_.isEmpty(obj.createdBy)) {
             //   obj.UserName = _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'firstName') + " " + _.get(_.find(self.allUserName, { 'id': obj.createdBy }), 'lastName');
             // } else {
@@ -182,7 +182,7 @@ export class ContentCreationStaticsComponent implements OnInit, OnDestroy {
       // { field: 'identifier', header: 'Identifier' },
       { field: 'subject', header: 'Topic' },
       { field: 'medium', header: 'Language' },
-      { field: 'createdOn', header: 'Created On' },
+      { field: 'createdOn', header: 'Last Published On' },
       // { field: 'objectType', header: 'Object Type' },
       { field: 'framework', header: 'Framework' },
       { field: 'UserName', header: 'Created By' },

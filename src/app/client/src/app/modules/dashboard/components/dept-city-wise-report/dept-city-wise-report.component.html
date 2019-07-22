@@ -54,7 +54,7 @@
     </form><br><br>
     <div class="ui grid" *ngIf="!noResult && tableData.length > 0">
         <div class="twelve wide column">
-            <span>Number of resource created:&nbsp;<b>{{tableData.length}}</b></span>
+            <span>Number of contents created:&nbsp;<b>{{tableData.length}}</b></span>
         </div>
         <div class="twelve wide column">
             <p-table #dt [value]="tableData" [columns]="cols" [paginator]="true" [rows]="10" [resizableColumns]="true">

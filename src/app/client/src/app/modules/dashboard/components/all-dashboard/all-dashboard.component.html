@@ -3,6 +3,7 @@
         <div class="twelve wide column workspacesegment">
             <sui-tabset>
                 <div class="ui top attached tabular menu">
+                    <a class="item" suiTabHeader="yourLearnings">Your Learnings</a>
                     <a class="item" suiTabHeader="contentcreation" appPermission [permission]='adminDashboard'>Content
                         Creation</a>
                     <a class="item" suiTabHeader="citywisecontentcreation" appPermission
@@ -11,6 +12,54 @@
                         [permission]='adminDashboard'>Department Wise Content Creation</a>
                     <a class="item" suiTabHeader="contenttypewisecontentcreation" appPermission
                         [permission]='adminDashboard'>Content Type Wise Content Creation</a>
+                </div>
+                <div class="ui bottom attached segment" suiTabContent="yourLearnings">
+                    <div class="twelve wide column" *ngIf="showTrainingstats && enrolledCourseData.length > 0">
+                        <p-chart type="doughnut" [data]="donutChartData" height="250px"></p-chart>
+                    </div>
+                    <br>
+                    <div class="twelve wide column" *ngIf="showTrainingstats && enrolledCourseData.length > 0">
+                        <p-table #dt [value]="enrolledCourseData" [columns]="cols" [paginator]="true" [rows]="10"
+                            [resizableColumns]="true">
+                            <ng-template pTemplate="caption">
+                                <div class="ui small left icon input" style="float: left">
+                                    <i class="search icon"></i>
+                                    <input type="text" pInputText placeholder="Search"
+                                        (input)="dt.filterGlobal($event.target.value, 'contains')">
+                                </div>
+                                <div class="ui-helper-clearfix">
+                                    <button type="button" pButton icon="fa fa-file" iconPos="left" label="Export"
+                                        (click)="dt.exportCSV()" style="float:right"></button>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header" let-columns>
+                                <tr>
+                                    <th *ngFor="let col of columns" pResizableColumn>
+                                        {{col.header}}
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                                <tr>
+                                    <td *ngFor="let col of columns" class="ui-resizable-column">
+                                        {{rowData[col.field]}}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                    <div class="ui grid" *ngIf="!showTrainingstats">
+                        <div class="one wide column"></div>
+                        <div class="ten wide column">
+                            <div class="ui two column centered grid no-result-container">
+                                <div class="column">
+                                    <img src="{{'assets/images/erroricon.png' | cdnprefixurl}}">
+                                    <div class="no-result-text">{{resourceService?.messages?.stmsg?.m0131}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="one wide column"></div>
+                    </div>
                 </div>
                 <div class="ui bottom attached segment" suiTabContent="contentcreation">
                     <app-content-creation-statics></app-content-creation-statics>

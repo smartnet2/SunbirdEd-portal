@@ -96,7 +96,7 @@ export class DeptCityWiseReportComponent implements OnInit, OnDestroy {
         "sort_by": {
           "lastUpdatedOn": "desc"
         },
-        "fields": ["identifier", "creator", "organisation", "name", "contentType", "createdFor", "channel", "board", "medium", "gradeLevel", "subject", "lastUpdatedOn", "status", "createdBy", "framework", "createdOn"]
+        "fields": ["identifier", "creator", "organisation", "name", "contentType", "createdFor", "channel", "board", "medium", "gradeLevel", "subject", "lastUpdatedOn", "status", "createdBy", "framework", "createdOn", "lastPublishedOn"]
       }
     };
     if (!_.isEmpty(this.selectedCity) && !_.isEmpty(this.selectedDepartment)) {
@@ -106,14 +106,15 @@ export class DeptCityWiseReportComponent implements OnInit, OnDestroy {
             this.tableData = [];
             let tempObj = _.cloneDeep(response.result.content);
             var self = this;
-            tempObj = _.filter(tempObj, function (obj) {
-              if ((_.toArray(obj.organisation).length > 1) && _.toArray(obj.organisation)[1] == _.get(self.selectedDepartment, 'orgName')) {
+            tempObj = _.filter(_.cloneDeep(tempObj), function (obj) {
+              if (_.indexOf(_.toArray(obj.createdFor), _.get(self.selectedDepartment, 'identifier')) > -1) {
                 return obj;
               }
             });
             _.map(tempObj, function (obj) {
-              obj.createdOn = self.datePipe.transform(obj.createdOn, 'MM/dd/yyyy');
-              obj.OrgName = _.toArray(obj.organisation)[0];
+              obj.createdOn = self.datePipe.transform(obj.lastPublishedOn, 'MM/dd/yyyy');
+              obj.OrgName = _.get(self.selectedCity, 'name');
+              obj.departmentName = _.get(self.selectedDepartment, 'orgName');
               // if (!_.isEmpty(obj.channel)) {
               //   obj.OrgName = _.lowerCase(_.get(_.find(self.allOrgName, { 'id': obj.channel }), 'orgName'));
               // } else {
@@ -246,13 +247,14 @@ export class DeptCityWiseReportComponent implements OnInit, OnDestroy {
   initializeColumns() {
     this.cols = [
       { field: 'OrgName', header: 'City Name' },
+      { field: 'departmentName', header: 'Creator Department' },
       { field: 'name', header: 'Name' },
       { field: 'board', header: 'Category' },
       { field: 'gradeLevel', header: 'Sub Category' },
       // { field: 'identifier', header: 'Identifier' },
       { field: 'subject', header: 'Topic' },
       { field: 'medium', header: 'Language' },
-      { field: 'createdOn', header: 'Created On' },
+      { field: 'createdOn', header: 'Last Published On' },
       // { field: 'objectType', header: 'Object Type' },
       { field: 'framework', header: 'Framework' },
       { field: 'UserName', header: 'Created By' },
