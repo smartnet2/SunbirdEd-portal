@@ -1,19 +1,23 @@
-
+import { of as observableOf, throwError as observableThrowError, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { mergeMap } from 'rxjs/operators';
 import { Injectable, Input } from '@angular/core';
 import { UserService } from './../user/user.service';
 import { ContentService } from './../content/content.service';
-import { ConfigService, ServerResponse } from '@sunbird/shared';
-import { Observable } from 'rxjs';
+import { ConfigService, ServerResponse, HttpOptions } from '@sunbird/shared';
+// import { Observable } from 'rxjs';
 import { SearchParam } from './../../interfaces/search';
 import { LearnerService } from './../learner/learner.service';
 import { PublicDataService } from './../public-data/public-data.service';
+import { HttpClient } from '@angular/common/http';
+
 import * as _ from 'lodash';
 /**
  * Service to search content
  */
 @Injectable()
 export class SearchService {
+  http: HttpClient;
   /**
    * Contains searched content list
    */
@@ -51,9 +55,10 @@ export class SearchService {
    * @param {ConfigService} config config service reference
    * @param {LearnerService} config learner service reference
    */
-  constructor(user: UserService, content: ContentService, config: ConfigService,
+  constructor(http: HttpClient,user: UserService, content: ContentService, config: ConfigService,
     learnerService: LearnerService, publicDataService: PublicDataService) {
     this.user = user;
+    this.http = http;
     this.content = content;
     this.config = config;
     this.learnerService = learnerService;
@@ -280,7 +285,27 @@ export class SearchService {
         'Resource'
       ];
     }
-    return this.publicDataService.post(option);
+    // return this.publicDataService.post(option);
+    const default_headers = {
+      'Accept': 'application/json',
+      // 'X-Consumer-ID': 'X-Consumer-ID',
+      'X-Source': 'web',
+      // 'ts': moment().format(),
+      // 'X-msgid': UUID.UUID()
+    };
+
+    const httpOptions: HttpOptions = {
+      headers: default_headers,
+      params: option.param
+    };
+    return this.http.post('http://52.230.69.130:5050/v1/content/search', option.data, httpOptions).pipe(
+      mergeMap((data: ServerResponse) => {
+        if (data.responseCode !== 'OK') {
+          return observableThrowError(data);
+        }
+        return observableOf(data);
+      }));
+
   }
   /**
   * Batch Search.
