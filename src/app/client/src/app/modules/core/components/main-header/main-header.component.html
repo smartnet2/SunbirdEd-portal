@@ -126,14 +126,16 @@
                     <input type="text" id="keyword" name="filter_search" class="searchinput br-0"
                         title="{{resourceService?.frmelmnts?.prmpt?.search}}"
                         placeholder="{{resourceService?.frmelmnts?.prmpt?.search}}" [(ngModel)]="key"
-                        (keyup.enter)="onEnter(key)" />
+                        (keyup.enter)="onEnter(key,false)" />
                     <button class="ui icon button" style="border-radius: 0px 3px 3px 0px;">
-                        <i class="search blue icon br-0" (click)="onEnter(key)"
+                        <i class="search blue icon br-0" (click)="onEnter(key,false)"
                             title="{{resourceService?.frmelmnts?.prmpt?.search}}" tabindex="0"></i>
+                            <i *ngIf="showNLPSearch" class="caret down icon" (click)="menu.toggle($event)"></i>
+                            <p-menu #menu [popup]="true" [model]="menuItems" appendTo="body"></p-menu>
                     </button>
-                    <div class="field ml-15" *ngIf="showCheckBox">
+                    <!-- <div class="field ml-15" *ngIf="showNLPSearch">
                         <sui-checkbox class="ui checkbox nlp-search" [(ngModel)]="enableNLPSearch" style="vertical-align: -webkit-baseline-middle;">Enable NLP Search</sui-checkbox>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <!--/Explore Pages-->

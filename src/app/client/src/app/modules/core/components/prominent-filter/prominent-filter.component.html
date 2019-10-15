@@ -18,7 +18,7 @@
                 <div class="twelve wide tablet ten wide computer column mobile-p-0">
                   <div class="ui grid" *ngIf="formFieldProperties">
                     <ng-container *ngIf="formFieldProperties.length <= 4">
-                      <div class="six wide mobile three wide tablet three wide computer column"
+                      <div class="three wide mobile three wide tablet three wide computer column"
                         *ngFor="let field of formFieldProperties">
                         <div class="field">
                           <label class="mb-10">{{field.label}}</label>
@@ -33,7 +33,7 @@
                           </ng-container>
                         </div>
                       </div>
-                      <div class="six wide mobile three wide tablet three wide computer column"
+                      <div class="three wide mobile three wide tablet three wide computer column"
                         *ngIf="isShowContentTypeFilter">
                         <div class="field">
                           <label class="mb-10">{{resourceService?.frmelmnts?.lbl?.resourcetype}}</label>
@@ -49,7 +49,7 @@
                       </div>
                     </ng-container>
                     <ng-container *ngIf="formFieldProperties.length > 4">
-                      <div class="six wide mobile four wide tablet four wide computer column"
+                      <div class="three wide mobile four wide tablet four wide computer column"
                         *ngFor="let field of formFieldProperties">
                         <div class="field large">
                           <label class="mb-10">{{field.label}}</label>

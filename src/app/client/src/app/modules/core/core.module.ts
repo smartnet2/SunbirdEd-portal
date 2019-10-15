@@ -22,10 +22,12 @@ import { AuthGuard } from './guard/auth-gard.service';
 import { CacheService } from 'ng2-cache-service';
 import { WebExtensionModule } from '@project-sunbird/web-extensions';
 import { TelemetryModule } from '@sunbird/telemetry';
+import { MenuModule } from 'primeng/menu';
 @NgModule({
   imports: [
     CommonModule,
     SuiModule,
+    MenuModule,
     SharedModule,
     RouterModule,
     FormsModule,

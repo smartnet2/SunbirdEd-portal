@@ -24,6 +24,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy, DoCheck {
   /**
    * organization log
    */
+  menuItems:any=[];
   exploreButtonVisibility: string;
   enableNLPSearch:boolean=false;
   logo: string;
@@ -104,7 +105,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy, DoCheck {
   userDataSubscription: Subscription;
   exploreRoutingUrl: string;
   pageId: string;
-  showCheckBox: boolean=false;
+  showNLPSearch: boolean=false;
   /*
   * constructor
   */
@@ -118,7 +119,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy, DoCheck {
     this.tenantService = tenantService;
   }
   ngDoCheck() {
-    this.showCheckBox = _.split(this.router.url,'/')[1] === 'explore' ? true : false;
+    this.showNLPSearch = _.split(this.router.url,'/')[1] === 'explore' ? true : false;
   }
   ngOnInit() {
     /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
@@ -195,8 +196,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy, DoCheck {
       });
     this.setInteractEventData();
     this.cdr.detectChanges();
+    this.menuItems = [{label: 'NLP Search',command: () => this.onEnter(this.key,true)}];
   }
-
   getCacheLanguage() {
     const isCachedDataExists = this.cacheService.exists('portalLanguage');
     if (isCachedDataExists) {
@@ -211,11 +212,11 @@ export class MainHeaderComponent implements OnInit, OnDestroy, DoCheck {
       this.router.navigate(['']);
     }
   }
-  onEnter(key) {
+  onEnter(key,isNLP:boolean) {
     this.key = key;
     this.queryParam = {};
     this.queryParam['key'] = this.key;
-    this.queryParam['nlpSearch'] = this.enableNLPSearch;
+    this.queryParam['nlpSearch'] = isNLP;
     if (this.key && this.key.length > 0) {
       this.queryParam['key'] = this.key;
     } else {

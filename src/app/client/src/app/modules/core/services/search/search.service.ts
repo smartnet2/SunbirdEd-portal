@@ -298,7 +298,7 @@ export class SearchService {
       headers: default_headers,
       params: option.param
     };
-    return this.http.post('http://52.230.69.130:5050/v1/content/search', option.data, httpOptions).pipe(
+    return this.http.post('http://52.163.206.249:5050/v1/content/search', option.data, httpOptions).pipe(
       mergeMap((data: ServerResponse) => {
         if (data.responseCode !== 'OK') {
           return observableThrowError(data);
