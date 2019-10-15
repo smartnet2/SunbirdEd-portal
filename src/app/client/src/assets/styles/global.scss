@@ -143,6 +143,12 @@ input[type=number]::-webkit-outer-spin-button {
 input#keyword {
   font-size: 12px!important;
 }
+.ui.checkbox.nlp-search label {
+  color:#fff;
+}
+.ui.checkbox.nlp-search input:focus~label {
+  color:#fff;
+}
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {  
   /* IE10+ specific styles go here */ 
   

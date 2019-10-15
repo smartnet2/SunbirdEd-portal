@@ -122,15 +122,18 @@
 
             <!--Explore Pages-->
             <div class="searchbox ml-0 mr-auto my-0" *ngIf="showExploreHeader">
-                <div class="ui fluid ui left action input searchbox-inner">
+                <div class="ui fluid ui left action input searchbox-inner" style="border: none;">
                     <input type="text" id="keyword" name="filter_search" class="searchinput br-0"
                         title="{{resourceService?.frmelmnts?.prmpt?.search}}"
                         placeholder="{{resourceService?.frmelmnts?.prmpt?.search}}" [(ngModel)]="key"
                         (keyup.enter)="onEnter(key)" />
-                    <button class="ui icon button">
+                    <button class="ui icon button" style="border-radius: 0px 3px 3px 0px;">
                         <i class="search blue icon br-0" (click)="onEnter(key)"
                             title="{{resourceService?.frmelmnts?.prmpt?.search}}" tabindex="0"></i>
                     </button>
+                    <div class="field ml-15" *ngIf="showCheckBox">
+                        <sui-checkbox class="ui checkbox nlp-search" [(ngModel)]="enableNLPSearch" style="vertical-align: -webkit-baseline-middle;">Enable NLP Search</sui-checkbox>
+                    </div>
                 </div>
             </div>
             <!--/Explore Pages-->

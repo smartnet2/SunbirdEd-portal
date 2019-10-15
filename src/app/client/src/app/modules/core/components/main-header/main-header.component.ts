@@ -1,7 +1,7 @@
 import { filter } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 import { UserService, PermissionService, TenantService } from './../../services';
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, DoCheck } from '@angular/core';
 import { ConfigService, ResourceService, IUserProfile, IUserData } from '@sunbird/shared';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import * as _ from 'lodash';
@@ -16,7 +16,7 @@ declare var jQuery: any;
   templateUrl: './main-header.component.html',
   styleUrls: ['./main-header.component.scss']
 })
-export class MainHeaderComponent implements OnInit, OnDestroy {
+export class MainHeaderComponent implements OnInit, OnDestroy, DoCheck {
   /**
    * reference of tenant service.
    */
@@ -25,6 +25,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
    * organization log
    */
   exploreButtonVisibility: string;
+  enableNLPSearch:boolean=false;
   logo: string;
   key: string;
   queryParam: any = {};
@@ -103,6 +104,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   userDataSubscription: Subscription;
   exploreRoutingUrl: string;
   pageId: string;
+  showCheckBox: boolean=false;
   /*
   * constructor
   */
@@ -115,7 +117,9 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     this.userService = userService;
     this.tenantService = tenantService;
   }
-
+  ngDoCheck() {
+    this.showCheckBox = _.split(this.router.url,'/')[1] === 'explore' ? true : false;
+  }
   ngOnInit() {
     /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
     $(function () {
@@ -130,7 +134,6 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
 
     for (i = 0; i < dropdown.length; i++) {
       dropdown[i].addEventListener("click", function () {
-        alert("Krish");
         this.classList.toggle("active");
         var dropdownContent = this.nextElementSibling;
         if (dropdownContent.style.display === "block") {
@@ -212,6 +215,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     this.key = key;
     this.queryParam = {};
     this.queryParam['key'] = this.key;
+    this.queryParam['nlpSearch'] = this.enableNLPSearch;
     if (this.key && this.key.length > 0) {
       this.queryParam['key'] = this.key;
     } else {
