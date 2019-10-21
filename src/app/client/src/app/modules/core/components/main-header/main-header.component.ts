@@ -17,6 +17,7 @@ declare var jQuery: any;
   styleUrls: ['./main-header.component.scss']
 })
 export class MainHeaderComponent implements OnInit, OnDestroy, DoCheck {
+  currentSearchMode:string = 'Basic';
   /**
    * reference of tenant service.
    */
@@ -120,6 +121,9 @@ export class MainHeaderComponent implements OnInit, OnDestroy, DoCheck {
   }
   ngDoCheck() {
     this.showNLPSearch = _.split(this.router.url,'/')[1] === 'explore' ? true : false;
+    if(_.split(this.router.url,'/')[1] !== 'explore') {
+      this.currentSearchMode = "Basic";
+    }
   }
   ngOnInit() {
     /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
@@ -196,7 +200,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy, DoCheck {
       });
     this.setInteractEventData();
     this.cdr.detectChanges();
-    this.menuItems = [{label: 'NLP Search',command: () => this.onEnter(this.key,true)}];
+    // this.menuItems = [{label: 'NLP Search',command: () => this.onEnter(this.key,true)}];
   }
   getCacheLanguage() {
     const isCachedDataExists = this.cacheService.exists('portalLanguage');
@@ -212,11 +216,13 @@ export class MainHeaderComponent implements OnInit, OnDestroy, DoCheck {
       this.router.navigate(['']);
     }
   }
-  onEnter(key,isNLP:boolean) {
+  onEnter(key) {
     this.key = key;
     this.queryParam = {};
     this.queryParam['key'] = this.key;
-    this.queryParam['nlpSearch'] = isNLP;
+    if(_.split(this.router.url,'/')[1] === 'explore') {
+      this.queryParam['nlpSearch'] = this.currentSearchMode === 'Basic' ? false : true;
+    }
     if (this.key && this.key.length > 0) {
       this.queryParam['key'] = this.key;
     } else {

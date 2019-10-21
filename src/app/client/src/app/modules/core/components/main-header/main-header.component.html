@@ -122,7 +122,24 @@
 
             <!--Explore Pages-->
             <div class="searchbox ml-0 mr-auto my-0" *ngIf="showExploreHeader">
-                <div class="ui fluid ui left action input searchbox-inner" style="border: none;">
+                <div class="ui mini right labeled action input" style="width: 100%;">
+                    <div class="ui dropdown label" suiDropdown *ngIf="showNLPSearch">
+                        <div class="text">{{currentSearchMode}}</div>
+                        <i class="dropdown icon"></i>
+                        <div class="menu" suiDropdownMenu>
+                            <div class="item" (click)="currentSearchMode='Basic'">Basic</div>
+                            <div class="item" (click)="currentSearchMode='Advanced'">Advanced</div>
+                        </div>
+                    </div>
+                    <input type="text" id="keyword" name="filter_search"
+                        placeholder="{{resourceService?.frmelmnts?.prmpt?.search}}"
+                        title="{{resourceService?.frmelmnts?.prmpt?.search}}" [(ngModel)]="key"
+                        (keyup.enter)="onEnter(key)">
+                    <button class="ui icon button" (click)="onEnter(key)">
+                        <i class="search icon" title="{{resourceService?.frmelmnts?.prmpt?.search}}"></i>
+                    </button>
+                </div>
+                <!-- <div class="ui fluid ui left action input searchbox-inner" style="border: none;">
                     <input type="text" id="keyword" name="filter_search" class="searchinput br-0"
                         title="{{resourceService?.frmelmnts?.prmpt?.search}}"
                         placeholder="{{resourceService?.frmelmnts?.prmpt?.search}}" [(ngModel)]="key"
@@ -132,11 +149,11 @@
                             title="{{resourceService?.frmelmnts?.prmpt?.search}}" tabindex="0"></i>
                             <i *ngIf="showNLPSearch" class="caret down icon" (click)="menu.toggle($event)"></i>
                             <p-menu #menu [popup]="true" [model]="menuItems" appendTo="body"></p-menu>
-                    </button>
-                    <!-- <div class="field ml-15" *ngIf="showNLPSearch">
+                    </button> -->
+                <!-- <div class="field ml-15" *ngIf="showNLPSearch">
                         <sui-checkbox class="ui checkbox nlp-search" [(ngModel)]="enableNLPSearch" style="vertical-align: -webkit-baseline-middle;">Enable NLP Search</sui-checkbox>
                     </div> -->
-                </div>
+                <!-- </div> -->
             </div>
             <!--/Explore Pages-->
             <!--/Search Box-->
