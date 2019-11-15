@@ -82,6 +82,19 @@
                     </div>
                     <p class="workspaceinstuction">{{resourceService?.frmelmnts?.lbl?.contentuploaddescription}}</p>
                 </div>
+                <div class="three wide column"  *ngIf='permissionService.permissionAvailable' appPermission 
+                    [permission]='contentUploadRole'>
+                    <div class="ui link card workspacecontent" routerLink="../h5p/"
+                    appTelemetryInteract [telemetryInteractObject]="{id:'',type:'upload-h5p',ver:'1.0'}" [telemetryInteractEdata]="{id:'uploadH5PContent',type:'click',pageid:'UploadH5PContent'}">
+                        <div class="content">
+                            <div class="textcontent">
+                                <i class='my-icon upload icon'></i>
+                                <span class="my-text">{{resourceService?.frmelmnts?.lbl?.h5pupload}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="workspaceinstuction">{{resourceService?.frmelmnts?.lbl?.h5puploaddescription}}</p>
+                </div>
             </div>
         </div>
     </div>
