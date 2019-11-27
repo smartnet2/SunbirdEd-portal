@@ -5,6 +5,7 @@
     "debug": true
   },
   "compilerOptions": {
+    "skipLibCheck": true,
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "paths": {

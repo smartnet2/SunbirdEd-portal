@@ -7,9 +7,19 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon">
+  <script type="text/javascript" src="/h5p/h5prenderer.js"></script>
 </head>
 
 <body>
+    <script type="text/javascript" src="/h5p/core/js/jquery.js"></script>
+    <script type="text/javascript" src="/h5p/core/js/h5p.js"></script>
+    <script type="text/javascript" src="/h5p/core/js/h5p-event-dispatcher.js"></script>
+    <script type="text/javascript" src="/h5p/core/js/h5p-x-api-event.js"></script>
+    <script type="text/javascript" src="/h5p/core/js/h5p-x-api.js"></script>
+    <script type="text/javascript" src="/h5p/core/js/h5p-content-type.js"></script>
+    <script type="text/javascript" src="/h5p/core/js/h5p-confirmation-dialog.js"></script>
+    <script type="text/javascript" src="/h5p/core/js/h5p-action-bar.js"></script>
+    <script type="text/javascript" src="/h5p/editor/scripts/h5peditor-editor.js"></script>
   <% if (userId) { %>
     <input type="hidden" id="userId" value="<%=userId%>" />
     <% } %>
@@ -48,6 +58,7 @@
                               <input type="hidden" id="videoMaxSize" value="<%=videoMaxSize%>" />
                               <input type="hidden" id="reportsLocation" value="<%=reportsLocation%>" />
                               <app-root></app-root>
+                              <script type="text/javascript" src="/h5p/h5peditor-init.js"></script>
 </body>
 
 </html>
